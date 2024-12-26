@@ -1,0 +1,10 @@
+prefix=C:/Users/asapk/miniconda3/envs/voting_system_env/Library
+exec_prefix=C:/Users/asapk/miniconda3/envs/voting_system_env/Library
+libdir=C:/Users/asapk/miniconda3/envs/voting_system_env/Library/lib
+includedir=C:/Users/asapk/miniconda3/envs/voting_system_env/Library/include
+
+Name: libjpeg
+Description: A SIMD-accelerated JPEG codec that provides the libjpeg API
+Version: 3.0.0
+Libs: -L${libdir} -ljpeg
+Cflags: -I${includedir}

@@ -1,0 +1,12 @@
+prefix=C:/Users/asapk/miniconda3/envs/voting_system_env/Library
+exec_prefix=${prefix}
+libdir=C:/Users/asapk/miniconda3/envs/voting_system_env/Library/lib
+includedir=C:/Users/asapk/miniconda3/envs/voting_system_env/Library/include
+
+Name: libuv-static
+Version: 1.49.2
+Description: multi-platform support library with a focus on asynchronous I/O.
+URL: http://libuv.org/
+
+Libs: -L${libdir} -l:libuv.a -lpsapi -luser32 -ladvapi32 -liphlpapi -luserenv -lws2_32 -ldbghelp -lole32 -lshell32
+Cflags: -I${includedir}
