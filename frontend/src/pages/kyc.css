@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f3f3f3;
+}
+
+.kyc-container {
+  width: 80%;
+  margin: 50px auto;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;}
+
+h2 {
+  font-size: 2rem;
+  color: #df3131;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.left-side {
+  width: 70%;
+}
+
+.right-side {
+  width: 15%;
+  position: fixed;
+  top: 200px;
+  right: 10%;
+  text-align: center;
+  padding: 7.5px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.candidate-card {
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  flex-wrap: wrap; 
+  overflow: hidden;
+}
+.candidate-info {
+  flex: 1;
+  margin-right: 20px;
+  overflow-wrap: break-word;
+}
+
+.candidate-image {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
+}
+
+.candidate-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.timer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #dc0e0e;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.time-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.time-label {
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.ends {
+  color: #dc0e0e;
+}

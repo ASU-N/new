@@ -37,9 +37,9 @@ const Login = () => {
         axios.post(`http://localhost:5000/${action}`, { frame, voter_id: votingId })
             .then(response => {
                 console.log("Response: ", response.data);
-                alert(response.data.message); // Display success/failure message
+                alert(response.data.message); 
                 if (response.data.message.includes('successful')) {
-                    navigate('/home');  // Navigate to /home if successful
+                    navigate('/home');  
                 }
             })
             .catch(error => console.error("Error: ", error));

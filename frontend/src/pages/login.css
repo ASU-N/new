@@ -99,14 +99,12 @@
   }
   
   .login-container .form-section{
-    /* border:1vh solid red; */
     display: flex;
     flex-direction: column;
   }
 
   .login-container .form-section .toggle-button{
     flex:10%;
-    /* border: 0.5vh solid yellow; */
     width: 100%;
     display: flex;
     align-items: center;
@@ -116,7 +114,6 @@
   
   .login-container .form-section .form-info{
     flex:90%;
-    /* border: 0.5vh solid blue; */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -126,7 +123,6 @@
     padding:0vh;
   }
   
-  /* Responsice */
 
   @media only screen and (max-width: 900px) {
     .login-container .container .image-section {
@@ -138,15 +134,15 @@
     }
   }
   .webcam-video {
-    width: 50%;  /* Adjust the width as needed */
-    height: auto; /* Maintain aspect ratio */
-    max-width: 1000px; /* Set a maximum width for the video */
+    width: 50%;  
+    height: auto; 
+    max-width: 1000px; 
     margin-top: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    display: block; /* Ensure the video is displayed as a block element */
-    margin-left: auto; /* Center the video horizontally */
-    margin-right: auto; /* Center the video horizontally */
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto; 
 }
-.button-container { margin-top: 20px;} /* Space above the button */
+.button-container { margin-top: 20px;} 
 

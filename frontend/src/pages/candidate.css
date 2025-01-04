@@ -1,0 +1,36 @@
+.candidates-container {
+    padding: 20px;
+  }
+  
+  .candidate-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .vote-button,
+  .manifesto-button {
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .vote-button {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .manifesto-button {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+  }
+  
