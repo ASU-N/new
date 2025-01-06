@@ -13,7 +13,7 @@ from datetime import datetime
 from wtforms import SelectField
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:aarati123@localhost/voting_system'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:sophiya123@localhost/voting_system'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
