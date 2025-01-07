@@ -15,16 +15,12 @@
     box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.1);
     align-items: center;
     padding: 2vh;
-    justify-content: center;
-    position: fixed;
-    top: 0;
+    justify-content: space-between;
   }
   
   /* Logo and Links */
   .root-layout header nav div.logo {
     display: flex;
-    position: fixed;
-    left: 2vh;
     align-items: center;
     color: white;
   }
@@ -53,9 +49,7 @@
   }
   
   /* Profile Button */
-  .root-layout header nav.homeNavBar button {
-    position: fixed;
-    right: 2vh;
+  .profile-image {
     width: 7vh;
     height: 7vh;
     border-radius: 50%;
@@ -137,4 +131,40 @@
     margin-top: 1vh;
     font-weight: 400;
   }
-  
+  /* logout css */
+  .profile-button {
+    position: relative;
+    margin-right: 32px;
+}
+
+.profile-button img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    top: 64px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.dropdown button {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    margin-top: 0px;
+}
+
+.dropdown button:hover {
+    background-color: #f0f0f0;
+}
