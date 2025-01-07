@@ -39,6 +39,116 @@ def add_candidates():
         app.logger.error(f"Error adding candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
 ########################## mathi samma matra ##############################
+####################/api/elections wala ma yo hala pahila ko hatayera###########################
+@app.route('/api/elections', methods=['GET'])
+def get_elections():
+    try:
+        current_time = datetime.now() 
+        app.logger.debug(f"Current time: {current_time}")
+
+        elections = Election.query.all()
+
+        past_elections = []
+        ongoing_elections = []
+        upcoming_elections = []
+
+        for election in elections:
+            start_date = election.start_date
+            start_time = election.start_time
+            end_date = election.end_date
+            end_time = election.end_time
+
+            
+            start_datetime = datetime.combine(start_date, start_time)
+            end_datetime = datetime.combine(end_date, end_time)
+
+            app.logger.debug(f"Election {election.name} - Start: {start_datetime}, End: {end_datetime}")
+            candidates = Candidate.query.filter_by(election_id=election.id).all()
+            candidate_list = [
+                {
+                    "id": candidate.id,
+                    "name": candidate.name,
+                    "manifesto": candidate.manifesto,
+                    "photo_url": candidate.photo_url,
+                    "age": candidate.age,
+                    "status": candidate.status,
+                    "education": candidate.education,
+                }
+                for candidate in candidates
+            ]
+
+            if start_datetime <= current_time <= end_datetime:
+                # Ongoing election
+                ongoing_elections.append({
+                    "id": election.id,
+                    "name": election.name,
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
+                    "vote_now_button": True,
+                    "candidates": candidate_list
+                })
+            elif current_time > end_datetime:
+                # Past election
+                past_elections.append({
+                    "id": election.id,
+                    "name": election.name,
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
+                    "winner": election.winner or "TBD",
+                    "result_link": election.result_link or "No link available",
+                    "candidates": candidate_list
+                })
+            else:
+                # Upcoming election
+                upcoming_elections.append({
+                    "id": election.id,
+                    "name": election.name,
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
+                    "details_here_button": True,
+                    "candidates": candidate_list
+                })
+
+        app.logger.debug(f"Ongoing elections: {ongoing_elections}")
+        app.logger.debug(f"Past elections: {past_elections}")
+        app.logger.debug(f"Upcoming elections: {upcoming_elections}")
+
+        return jsonify({
+            "ongoing": ongoing_elections,
+            "past": past_elections,
+            "upcoming": upcoming_elections
+        }), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching elections: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+
+@app.route('/api/candidates', methods=['GET'])
+def get_candidates():
+    try:
+        candidates = Candidate.query.all()
+        return jsonify([{
+            'id': candidate.id,
+            'name': candidate.name,
+            'manifesto': candidate.manifesto,
+            'photo_url': candidate.photo_url,
+            'votes': candidate.votes,
+            'age': candidate.age,  
+            'status': candidate.status,  
+            'education': candidate.education  
+        } for candidate in candidates]), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching candidates: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+########################################################
 
 import logging
 import os
