@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom';  
 import './login.css';
 import votingImage from '../assets/login.png';
 import ToggleButton from '../components/toggleButton';
@@ -10,7 +10,7 @@ const Login = () => {
     const [votingId, setVotingId] = useState('');
     const [action, setAction] = useState('register');
     const videoRef = useRef(null);
-    const navigate = useNavigate();  // Initialize useNavigate
+    const navigate = useNavigate();  
 
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({ video: true })

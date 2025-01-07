@@ -1,0 +1,101 @@
+.votingSection{
+    margin:5vh;
+    /* border:0.5vh solid red; */
+    width:100%;
+    /* height:100vh; */
+    padding:2vh;
+    color:#002b6a;
+    font-size: 3vh;
+    
+}
+
+.votingSection .vote{
+    border:0.3vh solid #5cb9c8;
+    border-radius: 1vh;
+    width:70%;
+    padding:2vh;
+    height:40
+    vh;
+    margin: 3vh;
+    display: flex;
+    flex-direction: column;
+    /* text-align: center; */
+    align-items: center;
+
+}
+
+.votingSection .vote .info{
+    flex:3.5;
+    display: flex;
+    flex-direction: row;
+    /* border: 0.5vh solid purple; */
+    width:100%;
+
+}
+
+
+
+.votingSection .vote button{
+    flex:1;
+    border:none;
+    /* display: block; */
+
+    /* width:7vw; */
+    /* height: 0.5vh; */
+    color:white;
+    background-color: #5cb9c8;
+    border-radius: 2.5vh;
+    padding:0.5vh;
+
+    /* width:5vh; */
+    /* height: 50%; */
+    border:1vh solid yellow;
+    width:20vh;
+    margin:2vh;
+}
+
+.votingSection .vote button:hover{
+    opacity: 0.5;
+}
+
+.votingSection .vote .info img{
+    width:20vh;
+    height: 20vh;
+    background-color: 	#dbdbdb;
+    margin:1vh;
+    font-size: 2vh;
+    text-align: center;
+    color:rgb(89, 89, 248)
+}
+
+.votingSection .vote .info .text{
+    
+   /* border:0.1vh solid black; */
+    flex:75%;
+    justify-content: center;
+    margin-bottom:3vh;
+    display:flex;
+    flex-direction: column;
+    text-align: left;
+    padding:5vh;
+    
+}
+
+.votingSection .vote .button-container{
+    width: 100%;
+    /* border:solid 0.1vh black; */
+    padding:0.5vh;
+    align-content: center;
+    
+}
+
+
+.votingSection .vote .button-container button{
+    width:20%;
+    height: 75%;
+    padding:0.5vh;
+    font-size: 2.3vh;
+    border-radius: 2vh;
+    border:none;
+    top:0;
+}

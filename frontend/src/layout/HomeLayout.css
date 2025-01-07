@@ -1,12 +1,11 @@
-/* Root Layout */
+
 .root-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
     background-color: #f4f7fb;
   }
-  
-  /* Header Navigation */
+
   .root-layout header nav.homeNavBar {
     display: flex;
     width: 100vw;
@@ -20,7 +19,6 @@
     top: 0;
   }
   
-  /* Logo and Links */
   .root-layout header nav div.logo {
     display: flex;
     position: fixed;
@@ -52,7 +50,6 @@
     border-bottom: 2px solid #1abc9c;
   }
   
-  /* Profile Button */
   .root-layout header nav.homeNavBar button {
     position: fixed;
     right: 2vh;

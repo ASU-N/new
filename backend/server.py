@@ -13,7 +13,7 @@ from datetime import datetime
 from wtforms import SelectField
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:aarati123@localhost/voting_system'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 logging.basicConfig(level=logging.DEBUG)
 
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3000"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
 
 
 class Voter(db.Model):
@@ -44,7 +44,6 @@ class Candidate(db.Model):
     name = db.Column(db.String(50), nullable=False)
     manifesto = db.Column(db.Text, nullable=False)
     photo_url = db.Column(db.String(200), nullable=False)
-    votes = db.Column(db.Integer, default=0)
     election_id = db.Column(db.Integer, db.ForeignKey('election.id'), nullable=False)
     age = db.Column(db.Integer, nullable=False)  
     status = db.Column(db.String(50), nullable=False) 
@@ -59,8 +58,7 @@ from flask_admin import expose
 
 class CandidateModelView(ModelView):
     
-    column_exclude_list = ['votes']  
-    form_excluded_columns = ['votes']  
+    
 
    
     form_columns = ['name', 'manifesto', 'photo_url', 'election', 'age', 'status', 'education']  
@@ -141,8 +139,6 @@ def login():
         data = request.json
         frame_data = data['frame']
         voter_id = data['voter_id']
-
-        
         imgdata = base64.b64decode(frame_data.split(',')[1])
         nparr = np.frombuffer(imgdata, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -174,59 +170,82 @@ from datetime import datetime
 @app.route('/api/elections', methods=['GET'])
 def get_elections():
     try:
-        current_time = datetime.now()  
-        app.logger.debug(f"Current time: {current_time}") 
+        current_time = datetime.now() 
+        app.logger.debug(f"Current time: {current_time}")
 
-        elections = Election.query.all()  
+        elections = Election.query.all()
 
         past_elections = []
         ongoing_elections = []
         upcoming_elections = []
 
         for election in elections:
-            
-            start_datetime = datetime.combine(election.start_date, election.start_time)
-            end_datetime = datetime.combine(election.end_date, election.end_time)
+            start_date = election.start_date
+            start_time = election.start_time
+            end_date = election.end_date
+            end_time = election.end_time
 
             
+            start_datetime = datetime.combine(start_date, start_time)
+            end_datetime = datetime.combine(end_date, end_time)
+
             app.logger.debug(f"Election {election.name} - Start: {start_datetime}, End: {end_datetime}")
+            candidates = Candidate.query.filter_by(election_id=election.id).all()
+            candidate_list = [
+                {
+                    "id": candidate.id,
+                    "name": candidate.name,
+                    "manifesto": candidate.manifesto,
+                    "photo_url": candidate.photo_url,
+                    "age": candidate.age,
+                    "status": candidate.status,
+                    "education": candidate.education,
+                }
+                for candidate in candidates
+            ]
 
-            
             if start_datetime <= current_time <= end_datetime:
                 # Ongoing election
                 ongoing_elections.append({
                     "id": election.id,
                     "name": election.name,
-                    "start_datetime": start_datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                    "end_datetime": end_datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                    "vote_now_button": True
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
+                    "vote_now_button": True,
+                    "candidates": candidate_list
                 })
             elif current_time > end_datetime:
                 # Past election
                 past_elections.append({
                     "id": election.id,
                     "name": election.name,
-                    "start_datetime": start_datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                    "end_datetime": end_datetime.strftime("%Y-%m-%d %H:%M:%S"),
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
                     "winner": election.winner or "TBD",
-                    "result_link": election.result_link or "No link available"
+                    "result_link": election.result_link or "No link available",
+                    "candidates": candidate_list
                 })
             else:
                 # Upcoming election
                 upcoming_elections.append({
                     "id": election.id,
                     "name": election.name,
-                    "start_datetime": start_datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                    "end_datetime": end_datetime.strftime("%Y-%m-%d %H:%M:%S"),
-                    "details_here_button": True
+                    "start_date": start_date.strftime("%Y-%m-%d"),
+                    "start_time": start_time.strftime("%H:%M:%S"),
+                    "end_date": end_date.strftime("%Y-%m-%d"),
+                    "end_time": end_time.strftime("%H:%M:%S"),
+                    "details_here_button": True,
+                    "candidates": candidate_list
                 })
 
-        
         app.logger.debug(f"Ongoing elections: {ongoing_elections}")
         app.logger.debug(f"Past elections: {past_elections}")
         app.logger.debug(f"Upcoming elections: {upcoming_elections}")
 
-        
         return jsonify({
             "ongoing": ongoing_elections,
             "past": past_elections,
@@ -294,6 +313,47 @@ def get_candidates_by_election(election_id):
     except Exception as e:
         app.logger.error(f"Error fetching candidates for election {election_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/api/candidates/list', methods=['POST'])
+def add_candidates():
+    try:
+        candidates_data = request.json
+
+        if not candidates_data or not isinstance(candidates_data, list):
+            return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
+        
+        for candidate_data in candidates_data:
+            name = candidate_data.get('name')
+            manifesto = candidate_data.get('manifesto')
+            photo_url = candidate_data.get('photo_url')
+            age = candidate_data.get('age')
+            status = candidate_data.get('status')
+            education = candidate_data.get('education')
+            election_id = candidate_data.get('election_id')
+
+            if not all([name, manifesto, photo_url, age, status, education, election_id]):
+                return jsonify({"error": "Missing required candidate information."}), 400
+
+            new_candidate = Candidate(
+                name=name,
+                manifesto=manifesto,
+                photo_url=photo_url,
+                age=age,
+                status=status,
+                education=education,
+                election_id=election_id
+            )
+
+            db.session.add(new_candidate)
+
+        db.session.commit()  
+
+        return jsonify({"message": "Candidates added successfully."}), 201
+
+    except Exception as e:
+        app.logger.error(f"Error adding candidates: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     try:

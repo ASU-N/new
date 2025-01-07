@@ -2,59 +2,63 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./home.css";
 
+
+var endTime=null,startTime=null;
+
+const changeTime=(date,time)=>{
+const get_date=new Date(date+'T00:00:00');
+const ms_date=get_date.getTime();
+const [hours,minutes,seconds]=time.split(":").map(Number);
+const ms_Time=(hours*3600000)+(minutes*60000)+(seconds*1000);
+const total_ms=ms_Time+ms_date;
+const changed_time=new Date(total_ms);
+return changed_time;
+
+}
+
+
 const ElectionCard = ({ election, type }) => {
   const navigate = useNavigate();
-  const [remainingTime, setRemainingTime] = useState("");
 
-  useEffect(() => {
-    const calculateRemainingTime = () => {
-      const endTime = new Date(election.end_datetime);
-      const currentTime = new Date();
-      const remainingSeconds = Math.max((endTime - currentTime) / 1000, 0);
-      const hours = Math.floor(remainingSeconds / 3600);
-      const minutes = Math.floor((remainingSeconds % 3600) / 60);
-      const seconds = Math.floor(remainingSeconds % 60);
-      return `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    };
+const end =changeTime(election.end_date,election.end_time);
+const start=changeTime(election.start_date,election.start_time);
 
-  
-    setRemainingTime(calculateRemainingTime());
 
-  
-    const interval = setInterval(() => {
-      setRemainingTime(calculateRemainingTime());
-    }, 1000);
+startTime=start;
+endTime=end;
 
-    
-    return () => clearInterval(interval);
-  }, [election.end_datetime]);
 
-  const handleKYCClick = () => {
-    navigate(`/home/kyc/${election.id}`);
-  };
+
+
+const handleClickOnGoing = (data) => {
+    navigate('/election',{state:data});
+
+};
 
   return (
     <div className={`election-card ${type}`}>
       <h3>{election.name}</h3>
       <p>
-        Starts: {new Date(election.start_datetime).toLocaleString()} | Ends:{" "}
-        {new Date(election.end_datetime).toLocaleString()}
+        Starts: {start.toString()}  |  Ends:{end.toString()}
+        {/* {new Date(election.end_datetime).toLocaleString()} */}
       </p>
+      <p>Time Stamp</p>
       {type === "ongoing" && (
         <>
-          <p>Time Remaining: {remainingTime}</p>
-          <button className="vote-now" onClick={handleKYCClick}>
+          {/* <p>Time Remaining: {remainingTime}</p> */}
+          <button className="vote-now" onClick={()=>{
+            handleClickOnGoing(election)
+
+          }}>
             Vote Now
           </button>
         </>
       )}
-      {type === "upcoming" && (
+      {/* {type === "upcoming" && (
         <button className="details-here" onClick={handleKYCClick}>
           Details Here
         </button>
-      )}
+      )} */}
       {type === "past" && (
         <>
           <p>Winner: {election.winner}</p>
@@ -83,6 +87,7 @@ const Home = () => {
         throw new Error("Failed to fetch elections");
       }
       const data = await response.json();
+      // console.log(data);
       if (data.ongoing && data.past && data.upcoming) {
         setElections(data);
       } else {
@@ -99,7 +104,10 @@ const Home = () => {
     fetchElections();
   }, []);
 
+  // console.log()
+
   return (
+    
     <div className="home">
       <h1>Election Dashboard</h1>
       {isLoading ? (
@@ -147,3 +155,6 @@ const Home = () => {
 };
 
 export default Home;
+
+export  {endTime,startTime};
+

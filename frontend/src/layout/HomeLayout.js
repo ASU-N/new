@@ -13,9 +13,7 @@ export default function HomeLayout() {
                         <p>OVS</p>
                     </div>
                     <NavLink to="/home" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
-                    <NavLink to="/home/kyc" className={({ isActive }) => (isActive ? "active" : "")}>Know Your Candidates</NavLink>
                     <NavLink to="/home/result" className={({ isActive }) => (isActive ? "active" : "")}>Results</NavLink>
-                    <NavLink to="/home/guidelines" className={({ isActive }) => (isActive ? "active" : "")}>Guidelines</NavLink>
                     <button><img src={profile} alt='Voter Profile' /></button>
                 </nav>
             </header>
