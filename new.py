@@ -1,3 +1,5 @@
+candidates_storage = []
+
 @app.route('/api/candidates/list', methods=['POST'])
 def add_candidates():
     try:
@@ -15,27 +17,35 @@ def add_candidates():
             age = candidate_data.get('age')
             status = candidate_data.get('status')
             education = candidate_data.get('education')
-            candidate_id = candidate_data.get('id')
+            candidate_id = candidate_data.get('id')  
 
+            # Ensure required fields are present
             if not all([name, manifesto, photo_url, age, status, education, candidate_id]):
                 return jsonify({"error": "Missing required candidate information."}), 400
 
-            processed_candidates.append(Candidate(
-                id=candidate_id,  
-                name=name,
-                manifesto=manifesto,
-                photo_url=photo_url,
-                age=age,
-                status=status,
-                education=education
-            ))
+            processed_candidates.append({
+                'id': candidate_id,  
+                'name': name,
+                'manifesto': manifesto,
+                'photo_url': photo_url,
+                'age': age,
+                'status': status,
+                'education': education
+            })
 
-    
-        db.session.add_all(processed_candidates)
-        db.session.commit()
+       
+        candidates_storage.extend(processed_candidates)
 
         return jsonify({"message": "Candidates added successfully."}), 201
 
     except Exception as e:
         app.logger.error(f"Error adding candidates: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/candidates/list', methods=['GET'])
+def get_all_candidates():
+    try:
+        return jsonify({"candidates": candidates_storage}), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
