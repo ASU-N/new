@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./home.css";
 
-
 var endTime=null,startTime=null;
 
 const changeTime=(date,time)=>{
@@ -18,20 +17,46 @@ return changed_time;
 
 
 const ElectionCard = ({ election, type }) => {
+
   const navigate = useNavigate();
 
 const end =changeTime(election.end_date,election.end_time);
 const start=changeTime(election.start_date,election.start_time);
+// const electionData=useState({});
 
 
-startTime=start;
-endTime=end;
+const handleClickOnGoing = async (data) => {
+  
+   try {
+    const response=await fetch('http://localhost:5000/api/candidates/list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data.candidates),
+    });
+
+    if(!response.ok){
+      console.log(response);
+      alert('Error occur on fetching');
+    }
+    else
+    {
+      console.log(response);
+      // alert('Data successfully sent');
+       navigate('/election');
+    }
+
+    // console.log(response);
+    // navigate('/election');
 
 
+   } catch (error) {
+    alert(error.message)
+   }
 
+   
 
-const handleClickOnGoing = (data) => {
-    navigate('/election',{state:data});
 
 };
 
@@ -47,8 +72,10 @@ const handleClickOnGoing = (data) => {
         <>
           {/* <p>Time Remaining: {remainingTime}</p> */}
           <button className="vote-now" onClick={()=>{
-            handleClickOnGoing(election)
-
+            handleClickOnGoing(election);
+            startTime=start;
+            endTime=end;
+              
           }}>
             Vote Now
           </button>
@@ -120,7 +147,7 @@ const Home = () => {
             <h2>Ongoing Elections</h2>
             {elections.ongoing.length > 0 ? (
               elections.ongoing.map((election) => (
-                <ElectionCard key={election.id} election={election} type="ongoing" />
+                <ElectionCard key={election.id} election={election} type="ongoing"  />
               ))
             ) : (
               <p>No ongoing elections at the moment.</p>

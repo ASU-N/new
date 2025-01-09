@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 logging.basicConfig(level=logging.DEBUG)
 
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3000"], allow_headers=["Content-Type"], supports_credentials=True)
 
 
 class Voter(db.Model):
@@ -313,15 +313,18 @@ def get_candidates_by_election(election_id):
     except Exception as e:
         app.logger.error(f"Error fetching candidates for election {election_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
+candidates_storage = []
 
 @app.route('/api/candidates/list', methods=['POST'])
 def add_candidates():
     try:
-        candidates_data = request.json
+        candidates_data = request.json  
 
         if not candidates_data or not isinstance(candidates_data, list):
             return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
-        
+
+        processed_candidates = []
+
         for candidate_data in candidates_data:
             name = candidate_data.get('name')
             manifesto = candidate_data.get('manifesto')
@@ -329,24 +332,24 @@ def add_candidates():
             age = candidate_data.get('age')
             status = candidate_data.get('status')
             education = candidate_data.get('education')
-            election_id = candidate_data.get('election_id')
+            candidate_id = candidate_data.get('id')  
 
-            if not all([name, manifesto, photo_url, age, status, education, election_id]):
+
+            if not all([name, manifesto, photo_url, age, status, education, candidate_id]):
                 return jsonify({"error": "Missing required candidate information."}), 400
 
-            new_candidate = Candidate(
-                name=name,
-                manifesto=manifesto,
-                photo_url=photo_url,
-                age=age,
-                status=status,
-                education=education,
-                election_id=election_id
-            )
+            processed_candidates.append({
+                'id': candidate_id,  
+                'name': name,
+                'manifesto': manifesto,
+                'photo_url': photo_url,
+                'age': age,
+                'status': status,
+                'education': education
+            })
 
-            db.session.add(new_candidate)
-
-        db.session.commit()  
+       
+        candidates_storage.extend(processed_candidates)
 
         return jsonify({"message": "Candidates added successfully."}), 201
 
@@ -354,6 +357,15 @@ def add_candidates():
         app.logger.error(f"Error adding candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/candidates/list', methods=['GET'])
+def get_all_candidates():
+    try:
+        print(candidates_storage)
+        # return({"candidates": candidates_storage}), 200
+        return (candidates_storage), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching candidates: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     try:

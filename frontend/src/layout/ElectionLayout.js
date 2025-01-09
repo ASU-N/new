@@ -11,11 +11,11 @@ export default function ElectionLayout() {
     const [seconds,setSeconds]=useState(0);
 
     // const deadline="January, 21, 2025";
-    console.log(endTime);
-    console.log(startTime);
-
+    // console.log(endTime);
+    // console.log(startTime);
+    
     const getTime=()=>{
-        const time=endTime-startTime; ;
+        const time=endTime-Date.now(); ;
         setHours( Math.floor(time/(1000*60*60)));   
         setMinutes(Math.floor((time/1000/60)%60));
         setSeconds(Math.floor(((time/1000)%60)));

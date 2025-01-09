@@ -1,17 +1,30 @@
 import './election.css';
-import { useLocation } from 'react-router-dom';
+import {useState,useEffect} from 'react';
+import axios from 'axios';
 
-export default function Election()
+export default   function Election()
 {
-   const location=useLocation();
-   const data=location.state;
 
-   console.log(data);
 
-   console.log('Election Data'+data);
+    const [candidate,setCandidate]=useState([]);    
+    
+    useEffect(()=>{
+        const fetchData=async()=>{
+            try {
+                const response=await axios.get('http://localhost:5000/api/candidates/list');
+                console.log(response.data);
+                setCandidate(response.data);
+                // console.log('Canidate',candidate);
+            } catch (error) {
+                console.log(error);
 
-   const candidate=data.candidates;
-   console.log(candidate);
+            }
+        }
+
+        fetchData();
+
+    },[])
+
    
     return(
        <div className="votingSection">
@@ -33,5 +46,9 @@ export default function Election()
     
             
        </div>
+
+
     )
+
+
 }
