@@ -31,12 +31,16 @@ const start=changeTime(election.start_date,election.start_time);
 const handleClickOnGoing = async (data) => {
   
    try {
+    console.log(data);
+
+
     const response=await fetch('http://localhost:5000/api/candidates/list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data.candidates),
+        body: JSON.stringify({candidate:data.candidates,electionName:data.name,electionId:data.id}),
+        // body:JSON.stringify(data.candidates)
     });
 
     if(!response.ok){

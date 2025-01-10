@@ -11,6 +11,8 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from datetime import datetime
 from wtforms import SelectField
+from flask import session
+from flask_admin import expose
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
@@ -48,20 +50,18 @@ class Candidate(db.Model):
     age = db.Column(db.Integer, nullable=False)  
     status = db.Column(db.String(50), nullable=False) 
     education = db.Column(db.String(100), nullable=False)
+    party = db.Column(db.String(100), nullable=False)
     election = db.relationship('Election', back_populates='candidates')
 
 
 with app.app_context():
     db.create_all()
 
-from flask_admin import expose
 
 class CandidateModelView(ModelView):
-    
-    
 
    
-    form_columns = ['name', 'manifesto', 'photo_url', 'election', 'age', 'status', 'education']  
+    form_columns = ['name', 'manifesto', 'photo_url', 'election', 'age', 'status', 'education','party']  
 
     def __init__(self, model, session, **kwargs):
         super(CandidateModelView, self).__init__(model, session, **kwargs)
@@ -128,7 +128,8 @@ def register():
         new_voter = Voter(voter_id=voter_id, face_encoding=face_encoding_bytes)
         db.session.add(new_voter)
         db.session.commit()
-        return jsonify({"message": "Registration successful"}), 200
+        session['voter_id'] = voter_id
+        return jsonify({"message": "Registration successful,and you are now logged in!"}), 200
     except Exception as e:
         app.logger.error(f"Error during registration: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -155,6 +156,7 @@ def login():
             db_face_encoding = np.frombuffer(voter.face_encoding, dtype=np.float64)
             matches = face_recognition.compare_faces([db_face_encoding], login_face_encoding)
             if matches[0]:
+                session['voter_id'] = voter_id
                 return jsonify({"message": "Login successful"}), 200
             else:
                 return jsonify({"message": "Face did not match. Login failed."}), 400
@@ -163,6 +165,17 @@ def login():
     except Exception as e:
         app.logger.error(f"Error during login: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    try:
+        
+        session.pop('voter_id', None)
+        return jsonify({"message": "Logged out successfully"}), 200
+    except Exception as e:
+        app.logger.error(f"Error during logout: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 from datetime import datetime
@@ -200,6 +213,7 @@ def get_elections():
                     "age": candidate.age,
                     "status": candidate.status,
                     "education": candidate.education,
+                    "party": candidate.party
                 }
                 for candidate in candidates
             ]
@@ -268,7 +282,8 @@ def get_candidates():
             'votes': candidate.votes,
             'age': candidate.age,  
             'status': candidate.status,  
-            'education': candidate.education  
+            'education': candidate.education,
+            'party': candidate.party  
         } for candidate in candidates]), 200
     except Exception as e:
         app.logger.error(f"Error fetching candidates: {str(e)}")
@@ -305,6 +320,7 @@ def get_candidates_by_election(election_id):
                     "age": candidate.age,
                     "status": candidate.status,
                     "education": candidate.education,
+                    "party": candidate.party,
                 }
                 for candidate in candidates
             ],
@@ -313,43 +329,58 @@ def get_candidates_by_election(election_id):
     except Exception as e:
         app.logger.error(f"Error fetching candidates for election {election_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
 candidates_storage = []
 
 @app.route('/api/candidates/list', methods=['POST'])
 def add_candidates():
     try:
-        candidates_data = request.json  
+       
+        data = request.json
+
+        candidates_data = data.get('candidate')
+        election_id = data.get('electionId')
+        election_name = data.get('electionName')
 
         if not candidates_data or not isinstance(candidates_data, list):
             return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
 
+        if not election_id or not election_name:
+            return jsonify({"error": "Missing election ID or election name."}), 400
+
         processed_candidates = []
 
-        for candidate_data in candidates_data:
-            name = candidate_data.get('name')
-            manifesto = candidate_data.get('manifesto')
-            photo_url = candidate_data.get('photo_url')
-            age = candidate_data.get('age')
-            status = candidate_data.get('status')
-            education = candidate_data.get('education')
-            candidate_id = candidate_data.get('id')  
+        for candidate in candidates_data:
+            
+            name = candidate.get('name')
+            manifesto = candidate.get('manifesto')
+            photo_url = candidate.get('photo_url')
+            age = candidate.get('age')
+            status = candidate.get('status')
+            education = candidate.get('education')
+            party = candidate.get('party')
 
-
-            if not all([name, manifesto, photo_url, age, status, education, candidate_id]):
+            if not all([name, manifesto, photo_url, age, status, education, party]):
                 return jsonify({"error": "Missing required candidate information."}), 400
 
             processed_candidates.append({
-                'id': candidate_id,  
+                'id': candidate.get('id'),  
                 'name': name,
                 'manifesto': manifesto,
                 'photo_url': photo_url,
                 'age': age,
                 'status': status,
-                'education': education
+                'education': education,
+                'party': party,
+                'election_id':election_id
             })
 
-       
-        candidates_storage.extend(processed_candidates)
+        candidates_storage.append({
+            'candidate': processed_candidates,
+            'electionId': election_id,
+            'electionName': election_name
+        })
 
         return jsonify({"message": "Candidates added successfully."}), 201
 
@@ -357,15 +388,20 @@ def add_candidates():
         app.logger.error(f"Error adding candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/api/candidates/list', methods=['GET'])
 def get_all_candidates():
     try:
-        print(candidates_storage)
-        # return({"candidates": candidates_storage}), 200
-        return (candidates_storage), 200
+        
+        if not candidates_storage:
+            return jsonify({"message": "No candidates available."}), 404
+        
+        return jsonify(candidates_storage), 200
+
     except Exception as e:
-        app.logger.error(f"Error fetching candidates: {str(e)}")
+        app.logger.error(f"Error retrieving candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     try:
