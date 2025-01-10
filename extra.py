@@ -354,7 +354,6 @@ def add_candidates():
             party = candidate_data.get('party')
             election = candidate_data.get('election')  
 
-            
             if not election or not isinstance(election, dict):
                 return jsonify({"error": "Election details should be provided as an object with 'id' and 'name'."}), 400
             election_id = election.get('id')
@@ -393,6 +392,10 @@ def get_all_candidates():
             "voter_id": voter_id,
             "candidates": candidates_storage,
         }), 200
+   
+
+   
+
     except Exception as e:
         app.logger.error(f"Error fetching candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
