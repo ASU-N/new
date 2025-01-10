@@ -10,12 +10,33 @@ export default function ElectionLayout() {
     const [minutes,setMinutes]=useState(0);
     const [seconds,setSeconds]=useState(0);
 
-    // const deadline="January, 21, 2025";
-    // console.log(endTime);
-    // console.log(startTime);
+
+
+    const string_end=localStorage.getItem('endTime');
+    const end=new Date(string_end);
+
+
+    useEffect(()=>{
+        if(startTime){
+            localStorage.setItem('startTime',startTime)
+        }
+    },[startTime])
+
+    useEffect(()=>{
+        if(endTime){
+            localStorage.setItem('endTime',endTime)
+        }
+    },[endTime])
+
+    console.log(localStorage.getItem('endTime'));
+
+
+
     
     const getTime=()=>{
-        const time=endTime-Date.now(); ;
+
+        const time=end-Date.now(); 
+        console.log(time);
         setHours( Math.floor(time/(1000*60*60)));   
         setMinutes(Math.floor((time/1000/60)%60));
         setSeconds(Math.floor(((time/1000)%60)));
@@ -24,7 +45,7 @@ export default function ElectionLayout() {
 
     useEffect(()=>{
 
-        const interval=setInterval(()=>getTime(endTime),1000);
+        const interval=setInterval(()=>getTime(end),1000);
         
         return ()=>clearInterval(interval);
 

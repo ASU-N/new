@@ -25,6 +25,10 @@ export default   function Election()
 
     },[])
 
+    const clickButton=(partyName)=>{
+        
+    }
+
    
     return(
        <div className="votingSection">
@@ -39,7 +43,7 @@ export default   function Election()
                         </div>
                         <img src="" alt="Candidate Profile"/>    
                         </div>    
-                        <div className="button-container"><button>Vote Now</button></div>
+                        <div className="button-container"><button onClick={()=>{clickButton(individual.party)}}>Vote Now</button></div>
                     </div>
                 )
             })}

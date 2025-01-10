@@ -4,7 +4,10 @@ import "./home.css";
 
 var endTime=null,startTime=null;
 
+
+
 const changeTime=(date,time)=>{
+
 const get_date=new Date(date+'T00:00:00');
 const ms_date=get_date.getTime();
 const [hours,minutes,seconds]=time.split(":").map(Number);
@@ -64,13 +67,18 @@ const handleClickOnGoing = async (data) => {
     <div className={`election-card ${type}`}>
       <h3>{election.name}</h3>
       <p>
-        Starts: {start.toString()}  |  Ends:{end.toString()}
-        {/* {new Date(election.end_datetime).toLocaleString()} */}
+        {type === "ongoing" ? (
+          <>Ends In {end.toString()}</>
+        ) : type === "upcoming" ? (
+          <>Start In {start.toString()} </>
+        ) : (
+          <>Started In {start.toString()} | Ended In {end.toString()}</>
+        )}
       </p>
-      <p>Time Stamp</p>
+
+      
       {type === "ongoing" && (
         <>
-          {/* <p>Time Remaining: {remainingTime}</p> */}
           <button className="vote-now" onClick={()=>{
             handleClickOnGoing(election);
             startTime=start;
