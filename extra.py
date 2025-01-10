@@ -352,10 +352,14 @@ def add_candidates():
             education = candidate_data.get('education')
             candidate_id = candidate_data.get('id')  
             party = candidate_data.get('party')
-            election_id = candidate_data.get('election_id')
-            election_name = candidate_data.get('election_name')
+            election = candidate_data.get('election')  
 
             
+            if not election or not isinstance(election, dict):
+                return jsonify({"error": "Election details should be provided as an object with 'id' and 'name'."}), 400
+            election_id = election.get('id')
+            election_name = election.get('name')
+
             if not all([name, manifesto, photo_url, age, status, education, candidate_id, party, election_id, election_name]):
                 return jsonify({"error": "Missing required candidate information, including election ID and name."}), 400
 
@@ -384,7 +388,6 @@ def add_candidates():
 @app.route('/api/candidates/list', methods=['GET'])
 def get_all_candidates():
     try:
-       
         voter_id = session.get('voter_id', None)
         return jsonify({
             "voter_id": voter_id,
@@ -393,6 +396,8 @@ def get_all_candidates():
     except Exception as e:
         app.logger.error(f"Error fetching candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
 
 
 
