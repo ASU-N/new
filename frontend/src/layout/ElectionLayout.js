@@ -28,7 +28,7 @@ export default function ElectionLayout() {
         }
     },[endTime])
 
-    console.log(localStorage.getItem('endTime'));
+    // console.log(localStorage.getItem('endTime'));
 
 
 
@@ -36,7 +36,7 @@ export default function ElectionLayout() {
     const getTime=()=>{
 
         const time=end-Date.now(); 
-        console.log(time);
+        // console.log(time);
         setHours( Math.floor(time/(1000*60*60)));   
         setMinutes(Math.floor((time/1000/60)%60));
         setSeconds(Math.floor(((time/1000)%60)));
@@ -50,6 +50,12 @@ export default function ElectionLayout() {
         return ()=>clearInterval(interval);
 
     },[]);
+
+    function clear()
+    {
+        localStorage.removeItem('startTime','endTime');
+        
+    }
     
     
     
@@ -64,7 +70,7 @@ export default function ElectionLayout() {
                     <NavLink to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
                     <NavLink to="/election/kyc" className={({ isActive }) => (isActive ? "active" : "")}>Know Your Candidates</NavLink>
                     <NavLink to="/election/guidelines" className={({ isActive }) => (isActive ? "active" : "")}>Guidelines</NavLink>
-                    <NavLink to="/home">Back</NavLink>
+                    <NavLink to="/home" onClick={()=>{clear()}}>Back</NavLink>
                 </nav>
             </header>
              <main>

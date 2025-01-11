@@ -8,7 +8,7 @@ export default   function Election()
 
     const [candidate,setCandidate]=useState([]);
     const [electionId,setElectionId]=useState();
-    const[electionName,setElectinName]=useState();    
+       
     
     useEffect(()=>{
         const fetchData=async()=>{
@@ -18,7 +18,6 @@ export default   function Election()
                 const data=array[0];
                 setCandidate(data.candidate);
                 setElectionId(data.electionId);
-                setElectinName(data.electionName);
                 
             } catch (error) {
                 console.log(error);
@@ -46,7 +45,7 @@ export default   function Election()
                             <p>Name:{individual.name}</p>
                             <p>Party:{individual.party}</p>
                         </div>
-                        <img src="" alt="Candidate Profile"/>    
+                        <img src={individual.photo_url} alt="Candidate Profile"/>    
                         </div>    
                         <div className="button-container"><button onClick={()=>{clickButton(individual.party,electionId)}}>Vote Now</button></div>
                     </div>

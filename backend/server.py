@@ -338,6 +338,7 @@ def add_candidates():
     try:
        
         data = request.json
+        print(data)
 
         candidates_data = data.get('candidate')
         election_id = data.get('electionId')
@@ -381,6 +382,8 @@ def add_candidates():
             'electionId': election_id,
             'electionName': election_name
         })
+
+        print(candidates_storage)
 
         return jsonify({"message": "Candidates added successfully."}), 201
 
