@@ -2,7 +2,6 @@ import { NavLink, Outlet } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import './ElectionLayout.css';
 import {useState,useEffect} from 'react';
-import {startTime,endTime} from '../pages/home';
 
 export default function ElectionLayout() {
     
@@ -16,19 +15,8 @@ export default function ElectionLayout() {
     const end=new Date(string_end);
 
 
-    useEffect(()=>{
-        if(startTime){
-            localStorage.setItem('startTime',startTime)
-        }
-    },[startTime])
 
-    useEffect(()=>{
-        if(endTime){
-            localStorage.setItem('endTime',endTime)
-        }
-    },[endTime])
 
-    // console.log(localStorage.getItem('endTime'));
 
 
 
@@ -36,7 +24,6 @@ export default function ElectionLayout() {
     const getTime=()=>{
 
         const time=end-Date.now(); 
-        // console.log(time);
         setHours( Math.floor(time/(1000*60*60)));   
         setMinutes(Math.floor((time/1000/60)%60));
         setSeconds(Math.floor(((time/1000)%60)));
@@ -51,11 +38,6 @@ export default function ElectionLayout() {
 
     },[]);
 
-    function clear()
-    {
-        localStorage.removeItem('startTime','endTime');
-        
-    }
     
     
     
@@ -70,7 +52,7 @@ export default function ElectionLayout() {
                     <NavLink to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
                     <NavLink to="/election/kyc" className={({ isActive }) => (isActive ? "active" : "")}>Know Your Candidates</NavLink>
                     <NavLink to="/election/guidelines" className={({ isActive }) => (isActive ? "active" : "")}>Guidelines</NavLink>
-                    <NavLink to="/home" onClick={()=>{clear()}}>Back</NavLink>
+                    <NavLink to="/home">Back</NavLink>
                 </nav>
             </header>
              <main>

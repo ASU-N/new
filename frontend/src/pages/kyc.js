@@ -2,25 +2,33 @@
 import '../css/styles.css';
 import {useState,useEffect} from 'react';
 import axios from 'axios';
+// import { useLocation } from 'react-router-dom';
 
 
 function Kyc(){   
    
-   const [candidate,setCandidate]=useState([]);
+    const [candidate,setCandidate]=useState([]);
+
        
     
     useEffect(()=>{
         const fetchData=async()=>{
             try {
                 const response=await axios.get('http://localhost:5000/api/candidates/list');
-                const array=response.data;
-                const data=array[0];
-                console.log(data);
-                setCandidate(data.candidate);
-               
+
+                   
+                const data=await response.data;
+                const id=sessionStorage.getItem('electionId')
+                const correct_data=data[id];
+                    
+                    // setElectionId(correct_data.electionId);
+                    setCandidate(correct_data.candidate);
+
+                
                 
             } catch (error) {
                 console.log(error);
+                alert('Error occurred while loading Candidates');
 
             }
         }
@@ -28,6 +36,8 @@ function Kyc(){
         fetchData();
 
     },[])
+       
+   
    
     return(
         <div>

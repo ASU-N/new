@@ -25,13 +25,39 @@ const ElectionCard = ({ election, type }) => {
 
 const end =changeTime(election.end_date,election.end_time);
 const start=changeTime(election.start_date,election.start_time);
-// const electionData=useState({});
+
+
+    
+
 
 
 const handleClickOnGoing = async (data) => {
   
-   try {
-    console.log(data);
+    // useEffect(()=>{
+    //     if(start){
+    //         localStorage.setItem('startTime',start)
+    //     }
+    // },[start])
+
+    // useEffect(()=>{
+    //     if(end){
+    //         localStorage.setItem('endTime',end)
+    //     }
+    // },[end])
+
+    localStorage.setItem('endTime',end);
+    localStorage.setItem('startTime',start);
+  
+  
+  
+  try {
+
+    const Json_input={
+      candidate:data.candidates,
+      electionName:data.name,
+      electionId:data.id
+
+    }
 
 
     const response=await fetch('http://localhost:5000/api/candidates/list', {
@@ -39,8 +65,7 @@ const handleClickOnGoing = async (data) => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({candidate:data.candidates,electionName:data.name,electionId:data.id}),
-        // body:JSON.stringify(data.candidates)
+        body: JSON.stringify(Json_input)
     });
 
     if(!response.ok){
@@ -49,13 +74,9 @@ const handleClickOnGoing = async (data) => {
     }
     else
     {
-      console.log(response);
-      // alert('Data successfully sent');
+      sessionStorage.setItem("electionId", data.id);
        navigate('/election');
     }
-
-    // console.log(response);
-    // navigate('/election');
 
 
    } catch (error) {
@@ -195,5 +216,4 @@ const Home = () => {
 
 export default Home;
 
-export  {endTime,startTime};
 

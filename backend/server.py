@@ -13,6 +13,7 @@ from datetime import datetime
 from wtforms import SelectField
 from flask import session
 from flask_admin import expose
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
@@ -333,27 +334,35 @@ def get_candidates_by_election(election_id):
 
 
 
-candidates_storage = {}
 
+
+# Initialize candidates_storage
+
+candidates_storage = {}
 
 
 @app.route('/api/candidates/list', methods=['POST'])
 def add_candidates():
     try:
-        data = request.json
-        print('Response:', data)
+        data = request.get_json()  # Use `get_json` for better JSON handling
+        print("Type of 'data':", type(data))
+        print("Received Data:", data)
 
-        # Extract data
+        # Validate the received data structure
+        if not isinstance(data, dict):
+            return jsonify({"error": "Invalid data format, expected a JSON object."}), 400
+
+        # Extract fields
         candidates_data = data.get('candidate')
         election_id = data.get('electionId')
         election_name = data.get('electionName')
 
-        # Validate candidates data and election info
+        # Validate extracted fields
         if not candidates_data or not isinstance(candidates_data, list):
-            return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
+            return jsonify({"error": "Invalid 'candidate' format, expected a list."}), 400
 
         if not election_id or not election_name:
-            return jsonify({"error": "Missing election ID or election name."}), 400
+            return jsonify({"error": "Missing 'electionId' or 'electionName'."}), 400
 
         print("Candidates Data:", candidates_data)
         print("Election ID:", election_id)
@@ -362,24 +371,27 @@ def add_candidates():
         processed_candidates = []
 
         for candidate in candidates_data:
-            # Extract candidate fields
-            name = candidate.get('name')
-            manifesto = candidate.get('manifesto')
-            photo_url = candidate.get('photo_url')
-            age = candidate.get('age')
-            status = candidate.get('status')
-            education = candidate.get('education')
-            party = candidate.get('party')
+            if not isinstance(candidate, dict):
+                return jsonify({"error": f"Invalid candidate format: {candidate}"}), 400
 
-            # Check for missing fields
+            # Extract and validate each candidate field
+            name = candidate.get('name', '').strip()
+            manifesto = candidate.get('manifesto', '').strip()
+            photo_url = candidate.get('photo_url', '').strip()
+            age = candidate.get('age')
+            status = candidate.get('status', '').strip()
+            education = candidate.get('education', '').strip()
+            party = candidate.get('party', '').strip()
+
+            # Validate required fields
             if not name:
-                return jsonify({"error": "Candidate is missing 'name'."}), 400
+                return jsonify({"error": "Each candidate must have a 'name'."}), 400
             if not manifesto:
                 return jsonify({"error": f"Candidate {name} is missing 'manifesto'."}), 400
             if not photo_url:
                 return jsonify({"error": f"Candidate {name} is missing 'photo_url'."}), 400
-            if not age:
-                return jsonify({"error": f"Candidate {name} is missing 'age'."}), 400
+            if not isinstance(age, int) or age <= 0:
+                return jsonify({"error": f"Candidate {name} has invalid 'age'."}), 400
             if not status:
                 return jsonify({"error": f"Candidate {name} is missing 'status'."}), 400
             if not education:
@@ -387,7 +399,7 @@ def add_candidates():
             if not party:
                 return jsonify({"error": f"Candidate {name} is missing 'party'."}), 400
 
-            # Add valid candidate to processed list
+            # Add valid candidate to the processed list
             processed_candidates.append({
                 'id': candidate.get('id'),
                 'name': name,
@@ -403,18 +415,22 @@ def add_candidates():
         # Store candidates under election_id
         candidates_storage[election_id] = {
             'candidate': processed_candidates,
-            'electionId': election_id,
-            'electionName': election_name
+            'electionId': election_id
         }
 
-        # Set the election_id in a cookie
-        response = make_response(jsonify({"message": "Candidates added successfully."}), 201)
-        response.set_cookie('election_id', election_id)
+        print(candidates_storage)
+        print(type(candidates_storage))
 
-        return response
+        # Set the election_id in a cookie
+        # response = make_response(jsonify({"message": "Candidates added successfully."}), 201)
+        # response.set_cookie('election_id', str(election_id))  # Ensure ID is a string for cookies
+
+        # print("Response headers:", response.headers)
+
+        return jsonify({"electionId": election_id},201)
 
     except Exception as e:
-        # Log the exception for debugging purposes
+        # Log exception details
         print("Exception Occurred:", str(e))
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
@@ -422,15 +438,17 @@ def add_candidates():
 @app.route('/api/candidates/list', methods=['GET'])
 def get_all_candidates():
     """Retrieve candidates for the election stored in cookies."""
-    election_id = request.cookies.get('election_id')
-
-    if not election_id:
-        return jsonify({"error": "No election ID found in cookies."}), 400
-
-    if election_id in candidates_storage:
-        return jsonify(candidates_storage[election_id]), 200
-    else:
-        return jsonify({"error": "Election ID not found."}), 404
+    try:
+            
+            if(candidates_storage):
+                return jsonify(candidates_storage),200
+            else:
+                return jsonify({"error": "Candidate Data is not found"},404)
+        # else:
+        #     return jsonify({"error": "Election ID not found."}), 404
+    except Exception as e:
+        print("Exception Occurred:", str(e))
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 
 if __name__ == '__main__':

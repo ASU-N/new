@@ -89,6 +89,14 @@
     .election-layout  nav.timerNavBar .countdown div .secondary-box{
         font-size: 5vh;
         align-items: center;
+        color:white;
+    
+    }
+    .election-layout  nav.timerNavBar .countdown div .secondary-box h2{
+        /* font-size: 5vh;
+        align-items: center; */
+        color:white;
+        font-size:6vh;
     
     }
     
@@ -96,6 +104,7 @@
         font-size: 2.5vh;
         text-align: center;
         margin-top:0vh;
+        color:white;
     }
     
     .election-layout nav.timerNavBar h1{
