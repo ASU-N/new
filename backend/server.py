@@ -4,7 +4,7 @@ import base64
 import cv2
 import numpy as np
 import face_recognition
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_admin import Admin
@@ -331,18 +331,22 @@ def get_candidates_by_election(election_id):
         return jsonify({"error": str(e)}), 500
 
 
-candidates_storage = []
+
+
+candidates_storage = {}
 
 @app.route('/api/candidates/list', methods=['POST'])
 def add_candidates():
     try:
-       
         data = request.json
-        print(data)
-
+        print('Response',data)
         candidates_data = data.get('candidate')
         election_id = data.get('electionId')
         election_name = data.get('electionName')
+        # print(candidates_data)
+        print(candidates_data)
+        print(election_id)
+        print(election_name)
 
         if not candidates_data or not isinstance(candidates_data, list):
             return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
@@ -353,7 +357,6 @@ def add_candidates():
         processed_candidates = []
 
         for candidate in candidates_data:
-            
             name = candidate.get('name')
             manifesto = candidate.get('manifesto')
             photo_url = candidate.get('photo_url')
@@ -374,36 +377,133 @@ def add_candidates():
                 'status': status,
                 'education': education,
                 'party': party,
-                'election_id':election_id
+                'election_id': election_id
             })
 
-        candidates_storage.append({
+        # Store the candidates under the election_id
+        candidates_storage[election_id] = {
             'candidate': processed_candidates,
             'electionId': election_id,
             'electionName': election_name
-        })
+        }
 
-        print(candidates_storage)
-
-        return jsonify({"message": "Candidates added successfully."}), 201
+        # Set the election_id in a cookie
+        response = make_response(jsonify({"message": "Candidates added successfully."}), 201)
+        response.set_cookie('election_id', election_id)  
+        return response
 
     except Exception as e:
-        app.logger.error(f"Error adding candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/candidates/list', methods=['GET'])
 def get_all_candidates():
+    """Retrieve candidates for the election stored in cookies."""
+    election_id = request.cookies.get('election_id') 
+    
+    if not election_id:
+        return jsonify({"error": "No election ID found in cookies."}), 400
+    
+    if election_id in candidates_storage:
+        return jsonify(candidates_storage[election_id]), 200
+    else:
+        return jsonify({"error": "Election ID not found."}), 404
+    
+
+@app.route('/api/candidates/list', methods=['POST'])
+def add_candidates():
     try:
-        
-        if not candidates_storage:
-            return jsonify({"message": "No candidates available."}), 404
-        
-        return jsonify(candidates_storage), 200
+        data = request.json
+        print('Response:', data)
+
+        # Extract data
+        candidates_data = data.get('candidate')
+        election_id = data.get('electionId')
+        election_name = data.get('electionName')
+
+        # Validate candidates data and election info
+        if not candidates_data or not isinstance(candidates_data, list):
+            return jsonify({"error": "Invalid data format, expected a list of candidates."}), 400
+
+        if not election_id or not election_name:
+            return jsonify({"error": "Missing election ID or election name."}), 400
+
+        print("Candidates Data:", candidates_data)
+        print("Election ID:", election_id)
+        print("Election Name:", election_name)
+
+        processed_candidates = []
+
+        for candidate in candidates_data:
+            # Extract candidate fields
+            name = candidate.get('name')
+            manifesto = candidate.get('manifesto')
+            photo_url = candidate.get('photo_url')
+            age = candidate.get('age')
+            status = candidate.get('status')
+            education = candidate.get('education')
+            party = candidate.get('party')
+
+            # Check for missing fields
+            if not name:
+                return jsonify({"error": "Candidate is missing 'name'."}), 400
+            if not manifesto:
+                return jsonify({"error": f"Candidate {name} is missing 'manifesto'."}), 400
+            if not photo_url:
+                return jsonify({"error": f"Candidate {name} is missing 'photo_url'."}), 400
+            if not age:
+                return jsonify({"error": f"Candidate {name} is missing 'age'."}), 400
+            if not status:
+                return jsonify({"error": f"Candidate {name} is missing 'status'."}), 400
+            if not education:
+                return jsonify({"error": f"Candidate {name} is missing 'education'."}), 400
+            if not party:
+                return jsonify({"error": f"Candidate {name} is missing 'party'."}), 400
+
+            # Add valid candidate to processed list
+            processed_candidates.append({
+                'id': candidate.get('id'),
+                'name': name,
+                'manifesto': manifesto,
+                'photo_url': photo_url,
+                'age': age,
+                'status': status,
+                'education': education,
+                'party': party,
+                'election_id': election_id
+            })
+
+        # Store candidates under election_id
+        candidates_storage[election_id] = {
+            'candidate': processed_candidates,
+            'electionId': election_id,
+            'electionName': election_name
+        }
+
+        # Set the election_id in a cookie
+        response = make_response(jsonify({"message": "Candidates added successfully."}), 201)
+        response.set_cookie('election_id', election_id)
+
+        return response
 
     except Exception as e:
-        app.logger.error(f"Error retrieving candidates: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        # Log the exception for debugging purposes
+        print("Exception Occurred:", str(e))
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+
+@app.route('/api/candidates/list', methods=['GET'])
+def get_all_candidates():
+    """Retrieve candidates for the election stored in cookies."""
+    election_id = request.cookies.get('election_id')
+
+    if not election_id:
+        return jsonify({"error": "No election ID found in cookies."}), 400
+
+    if election_id in candidates_storage:
+        return jsonify(candidates_storage[election_id]), 200
+    else:
+        return jsonify({"error": "Election ID not found."}), 404
 
 
 if __name__ == '__main__':
