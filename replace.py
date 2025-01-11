@@ -105,3 +105,49 @@ def get_all_candidates():
         # Log the error and return a failure message
         app.logger.error(f"Error fetching candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/vote', methods=['POST'])
+def vote():
+    try:
+        # Get the data sent by the frontend (including election_id, party_name, and timestamp)
+        data = request.json
+        election_id = data.get('election_id')
+        party_name = data.get('party_name')
+        timestamp = data.get('timestamp')
+        
+        # Check if all required data is present
+        if not election_id or not party_name or not timestamp:
+            return jsonify({"error": "Missing election_id, party_name, or timestamp."}), 400
+        
+        # Retrieve the voter_id from the session
+        voter_id = session.get('voter_id')
+        
+        # Check if the voter is logged in
+        if not voter_id:
+            return jsonify({"error": "Voter not logged in."}), 401
+        
+        # Check if the voter has already voted in this election
+        existing_vote = Vote.query.filter_by(voter_id=voter_id, election_id=election_id).first()
+        if existing_vote:
+            return jsonify({"message": "You have already voted in this election."}), 400
+
+        # Create a new vote entry
+        new_vote = Vote(
+            voter_id=voter_id,
+            election_id=election_id,
+            party_name=party_name,
+            timestamp=datetime.fromtimestamp(timestamp)  # Convert timestamp to datetime object
+        )
+        
+        # Add the vote to the database
+        db.session.add(new_vote)
+        db.session.commit()
+
+        # Return success message along with voter ID, party name, and timestamp
+        return jsonify({
+           
+            "party_name": party_name,
+            "timestamp": datetime.fromtimestamp(timestamp).isoformat()  # Convert timestamp to ISO format
+        }), 200
+        
