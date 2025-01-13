@@ -249,16 +249,18 @@
   }
   
   /* Section for Content */
-  .root-layout main section {
+  .root-layout main section.homelayout_section{
     flex: 80%;
     margin: 3vw;
     display: flex;
     flex-direction: column;
     padding: 2vh;
     background-color: #ffffff;
-    box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 0vh 2vh 1vh rgba(0, 0, 0, 0.1); */
     border-radius: 8px;
     overflow: hidden;
+    /* border:solid black 1vh; */
+  background-color: #f4f6f8;
   }
   
   .root-layout main nav.timerNavBar {

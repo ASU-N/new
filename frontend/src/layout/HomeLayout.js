@@ -54,8 +54,8 @@ export default function HomeLayout() {
                         <img src={logo} alt='logo' />
                         <p>OVS</p>
                     </div>
-                    <div>
-                       <NavLink to="/home" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
+                    <div className='navlink'>
+                    <NavLink to="/home" className={({ isActive }) => (isActive ? "active" : "")}>Dashboard</NavLink>
                    <NavLink to="/home/result" className={({ isActive }) => (isActive ? "active" : "")}>Results</NavLink> 
                     </div>
                     <div className='profile-button'>
@@ -70,8 +70,8 @@ export default function HomeLayout() {
                     </div>
                 </nav>
             </header>
-            <main>
-                <section>
+            <main className='home_main'>
+                <section className='homelayout_section'>
                     <Outlet />
                 </section>
             </main>

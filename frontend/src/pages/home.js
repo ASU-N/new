@@ -176,29 +176,32 @@ const Home = () => {
         <p className="error-message">{error}</p>
       ) : (
         <div className="sections-container">
-          <section>
-            <h2>Ongoing Elections</h2>
-            {elections.ongoing.length > 0 ? (
-              elections.ongoing.map((election) => (
-                <ElectionCard key={election.id} election={election} type="ongoing"  />
-              ))
-            ) : (
-              <p>No ongoing elections at the moment.</p>
-            )}
-          </section>
+        <div className="section_ongoing">
+                    <section className="home_section">
+                    <h2>Ongoing Elections</h2>
+                    {elections.ongoing.length > 0 ? (
+                      elections.ongoing.map((election) => (
+                        <ElectionCard key={election.id} election={election} type="ongoing"  />
+                      ))
+                    ) : (
+                      <p>No ongoing elections at the moment.</p>
+                    )}
+                  </section>
+        </div>
 
-          <section>
-            <h2>Upcoming Elections</h2>
-            {elections.upcoming.length > 0 ? (
-              elections.upcoming.map((election) => (
-                <ElectionCard key={election.id} election={election} type="upcoming" />
-              ))
-            ) : (
-              <p>No upcoming elections at the moment.</p>
-            )}
-          </section>
+           <div className="upcoming_past">
+              <section className="home_section">
+                        <h2>Upcoming Elections</h2>
+                        {elections.upcoming.length > 0 ? (
+                          elections.upcoming.map((election) => (
+                            <ElectionCard key={election.id} election={election} type="upcoming" />
+                          ))
+                        ) : (
+                          <p>No upcoming elections at the moment.</p>
+                        )}
+              </section>
 
-          <section>
+          <section className="home_section">
             <h2>Past Elections</h2>
             {elections.past.length > 0 ? (
               elections.past.map((election) => (
@@ -207,7 +210,8 @@ const Home = () => {
             ) : (
               <p>No past elections available.</p>
             )}
-          </section>
+          </section>  
+          </div>   
         </div>
       )}
     </div>
@@ -215,5 +219,4 @@ const Home = () => {
 };
 
 export default Home;
-
 

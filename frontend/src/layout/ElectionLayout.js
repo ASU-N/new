@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet,Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import './ElectionLayout.css';
 import {useState,useEffect} from 'react';
@@ -49,7 +49,7 @@ export default function ElectionLayout() {
                         <img src={logo} alt='logo' />
                         <p>OVS</p>
                     </div>
-                    <NavLink to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
+                    <Link to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</Link>
                     <NavLink to="/election/kyc" className={({ isActive }) => (isActive ? "active" : "")}>Know Your Candidates</NavLink>
                     <NavLink to="/election/guidelines" className={({ isActive }) => (isActive ? "active" : "")}>Guidelines</NavLink>
                     <NavLink to="/home">Back</NavLink>
