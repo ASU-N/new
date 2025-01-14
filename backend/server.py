@@ -11,13 +11,14 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from datetime import timedelta
 from datetime import datetime 
+from dateutil import parser
 
 
 
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:aarati123@localhost/voting_system'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = b'}XJ-\xb6\x9bx\xaf\x9c[\x0b\xcaj\xd2 D/y\xe9\x88\xae\xb7\xdb\x11'
 
@@ -172,6 +173,7 @@ class Vote(db.Model):
 @app.route('/api/check_vote_data', methods=['POST'])
 def check_vote_data():
     data = request.get_json()
+    print(data)
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
@@ -181,13 +183,17 @@ def check_vote_data():
     timestamp = data.get('timeStamp')
     voter_id = data.get('voter_id')
 
+    # parsed_timestamp = parser.parse(timestamp) 
+
     if not party_name or not election_id or not timestamp or not voter_id:
         return jsonify({"error": "Missing required data"}), 400
 
     try:
-        timestamp = datetime.fromisoformat(timestamp)
+        parsed_timestamp = parser.parse(timestamp)
+        # timestamp = datetime.fromisoformat(parsed_timestamp)
 
         # Check if the voter has already voted in this election
+
         existing_vote = Vote.query.filter_by(election_id=election_id, voter_id=voter_id).first()
         if existing_vote:
             return jsonify({"error": "Voter has already voted in this election"}), 400
@@ -197,7 +203,7 @@ def check_vote_data():
         if not election:
             return jsonify({"error": "Election not found"}), 404
 
-        new_vote = Vote(party_name=party_name, election_id=election_id, timestamp=timestamp, voter_id=voter_id)
+        new_vote = Vote(party_name=party_name, election_id=election_id, timestamp=parsed_timestamp, voter_id=voter_id)
         db.session.add(new_vote)
         db.session.commit()
 
@@ -206,7 +212,7 @@ def check_vote_data():
             "partyName": party_name,
             "electionId": election_id,
             "voter_id": voter_id,
-            "timeStamp": timestamp.isoformat()
+            "timeStamp": parsed_timestamp
         }), 200
     except Exception as e:
         db.session.rollback()
@@ -482,6 +488,27 @@ def get_all_candidates():
     except Exception as e:
         print("Exception Occurred:", str(e))
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+    
+@app.route('/api/votes', methods=['GET'])
+def get_votes():
+    try:
+        # Fetch all votes from the database
+        votes = Vote.query.all()
+        
+        # Convert the vote data to a list of dictionaries (objects) 
+        votes_data = []
+        for vote in votes:
+            vote_data = {
+                "partyName": vote.party_name,
+                "electionId": vote.election_id,
+                "timeStamp": vote.timestamp.isoformat()
+            }
+            votes_data.append(vote_data)
+        
+        return jsonify(votes_data), 200
+    except Exception as e:
+        logging.error(f"Failed to fetch votes: {e}")
+        return jsonify({"error": "Failed to fetch votes"}), 500
 
 
 if __name__ == '__main__':

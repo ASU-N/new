@@ -65,7 +65,7 @@ const handleClickOnGoing = async (data) => {
     }
 
 
-   } catch (error) {
+   } catch (error){
     alert(error.message)
    }
 

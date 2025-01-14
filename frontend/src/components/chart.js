@@ -1,78 +1,71 @@
-
-const timeVSVote=[];
-var time_stamp=[];
-
-
-
-
-const createResultArray=async(electionId)=>{
-    const response=await fetch('http://localhost:5000/GetAllResult', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }});
-
-    const data=response.data;
-    const result_Array=[];
-    data.map((individual)=>{
-        if(individual.electionId===electionId)
-        {
-            result_Array_electionId.push(individual);
-        }   
-    })
-
-    return result_Array;
-
-}
+import React from 'react';
+import Chart from 'react-apexcharts';
+import {chart} from '../data/chart.js'
+// import {timeStamp,timeVSVote}from '../data/chart';
 
 
 
+function Linechart(electionData,id){
+          
 
-async function createArray(start,end,result_data,party,electionId){
-
-    
-    const result_data=await createResultArray(electionId);
-    
-    var vote_array=[];
-    const i=new Date(start)
-    while(i<end)
-    {
-       
-
-        var bool=time_stamp.includes(i.getTime())
+    const {timeVSVote,timeStamp}=chart(electionData,id);
 
 
+    return(
+        <React.Fragment>
+          <div className='graph'>
+                {/* <h2>Line Chart Using Apex-Chart using React</h2> */}
+                <Chart
+                type='line'
+                width={1000}
+                height={420}
+                series={timeVSVote}
+                options={{
+                        title:{text:"Onlilne Voting-2024"},
+                        xaxis:{
+                            title:{text:"Time of Voting"},
+                            categories:timeStamp
+                        },
+                        yaxis:{
+                            title:{text:"Votes"}
+                        },
+                        stroke: {
+                            width: 3,
+                            curve: 'smooth'
+                        },
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom:10,
+                                left:30,
+                                right:5
+                            }
+                        },
+                        chart: {
+                        selection: {
+                            enabled: false
+                        }
+                        },
+                        legend:{
+                            position:'right'
+                        }
+                        }}
 
-        console.log(bool);
-        
-        if(!bool)
-        {
-            time_stamp.push(i.getTime());
-        }
-        
-        
 
-        var vote_count=0;
-
-        var startISO=i.toISOString();
-        var nextMinute=new Date(i);
-        nextMinute.setMinutes(nextMinute.getMinutes()+5);
-        var endISO=nextMinute.toISOString();
+                >
+                </Chart>
+          </div>
+        </React.Fragment>
+    )
+};
 
 
-        result_data.forEach((data)=>{
-                if(data.party===party)
-                {
-                    if(data.time>=startISO && data.time<endISO){
-                        vote_count++;
-                    }
-                }
-        })
-        vote_array.push(vote_count);
+export default Linechart;
 
 
-        i.setMinutes(i.getMinutes()+3);
-    }
-        timeVSVote.push({name:party,data:vote_array});
 
-}
+
+
+
+
+
