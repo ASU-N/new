@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./home.css";
 
 var endTime=null,startTime=null;
@@ -27,24 +27,10 @@ const end =changeTime(election.end_date,election.end_time);
 const start=changeTime(election.start_date,election.start_time);
 
 
-    
-
 
 
 const handleClickOnGoing = async (data) => {
   
-    // useEffect(()=>{
-    //     if(start){
-    //         localStorage.setItem('startTime',start)
-    //     }
-    // },[start])
-
-    // useEffect(()=>{
-    //     if(end){
-    //         localStorage.setItem('endTime',end)
-    //     }
-    // },[end])
-
     localStorage.setItem('endTime',end);
     localStorage.setItem('startTime',start);
   
@@ -114,17 +100,14 @@ const handleClickOnGoing = async (data) => {
           </button>
         </>
       )}
-      {/* {type === "upcoming" && (
-        <button className="details-here" onClick={handleKYCClick}>
-          Details Here
-        </button>
-      )} */}
       {type === "past" && (
         <>
           <p>Winner: {election.winner}</p>
-          <a href={election.result_link} target="_blank" rel="noreferrer">
+          {/* <a href={} target="_blank" rel="noreferrer">
             View Results
-          </a>
+          </a> */}
+
+          <Link to={`/home/result/${election.id}`}>View Result</Link>
         </>
       )}
     </div>

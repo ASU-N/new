@@ -14,12 +14,12 @@ import Election from './pages/election';
 function App() {
   return (
   <main>
-<Router>
+  <Router>
   <Routes>
     <Route path='/' element={<Login />} />
     <Route path='home' element={<HomeLayout />}>
       <Route index element={<Home />} />
-      <Route path='result' element={<Result />} />
+      <Route path='result/:electionId?' element={<Result />} />
     </Route>
     <Route path='election' element={<ElectionLayout/>}>
         <Route index element={<Election />} />
