@@ -1,0 +1,11 @@
+
+CREATE TABLE votes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    party_name VARCHAR(255) NOT NULL,
+    election_id INT NOT NULL,
+    voter_id VARCHAR(255) NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (election_id) REFERENCES election(id),
+    FOREIGN KEY (voter_id) REFERENCES voter(voter_id),
+    UNIQUE (election_id, voter_id)  -- Unique constraint to ensure one vote per voter per election
+);
