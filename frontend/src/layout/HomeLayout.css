@@ -228,7 +228,7 @@
     width: 7vh;
     height: 7vh;
     border-radius: 50%;
-    background-color: #2980b9;
+    background-color: white;
     border: none;
     display: flex;
     justify-content: center;
@@ -345,3 +345,4 @@
 .dropdown button:hover {
     background-color: #f0f0f0;
 }
+

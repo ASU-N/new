@@ -8,20 +8,27 @@ const createResultArray=async(electionId)=>{
         headers: {
             'Content-Type': 'application/json',
         }});
-
-    const data=response.data;
+    
+    const data=await response.json();
+    // console.log('Data of the data page',data);
     const result_Array=[];
+    console.log(data);
     data.map((individual)=>{
+        console.log(individual);
+        console.log(electionId);
         if(individual.electionId===electionId)
         {
+            console.log(individual);
             result_Array.push(individual);
         }   
     })
+    console.log(result_Array)
 
     return result_Array;
 
 }
 
+//election=object component of selected electionId
 const createArray=async (party,election,id)=>{
     
 
@@ -51,9 +58,9 @@ const createArray=async (party,election,id)=>{
 
 
         result_data.forEach((data)=>{
-                if(data.party===party)
+                if(data.partyName===party)
                 {
-                    if(data.time>=startISO && data.time<endISO){
+                    if(data.timeStamp>=startISO && data.timeStamp<endISO){
                         vote_count++;
                     }
                 }
@@ -65,12 +72,16 @@ const createArray=async (party,election,id)=>{
      timeVSVote.push({name:party,data:vote_array});
 }
 
-const chart=(election,id)=>{
+//party==election data==one objected selected electionId
+const ChartDB=(election,id,data)=>{
 
-    const Partys=election.party;
-    Partys.map((individual)=>{
-        createArray(individual.partyName,individual,id)
-    })
+
+
+    election.map((individual)=>{
+        createArray(individual,data,id)
+    }
+    )
+
 
     const timeStamp=time_stamp.map((item)=>{
     
@@ -80,3 +91,5 @@ const chart=(election,id)=>{
 
     return {timeVSVote, timeStamp}
 }
+
+export default ChartDB;
