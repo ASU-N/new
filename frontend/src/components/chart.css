@@ -1,0 +1,44 @@
+.graph{
+    /* border:solid red 0.5vh; */
+    /* margin-top:5vh; */
+    /* height:100vh; */
+    margin-bottom: 6vh;
+    padding:1vh;
+    /* top:50vh; */
+}
+
+.vote_column
+{
+    /* border:solid 1vh purple; */
+    display:flex;
+    flex-direction: row;
+    /* width: 60%; */
+}
+
+.individual-section{
+    /* border:solid black 0.1vh; */
+    /* height:10vh; */
+    margin:1vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 1vh;
+    width: 20%;
+    padding:1vh;
+    box-shadow: 0 0 1.2vh 0.1vh #D4D4D4;
+
+}
+
+.individual-section p{
+    margin-top: 1vh;
+}
+
+.line-chart{
+    /* border:black solid 0.1vh; */
+    margin-bottom:2.5vh;
+    box-shadow: 0 0 1.2vh 0.1vh #D4D4D4;
+    border-radius: 1vh;
+    padding:1vh;
+
+}

@@ -1,0 +1,49 @@
+.result-page{
+    display: flex;
+    flex-direction: column;
+    /* border: solid purple 1vh; */
+    margin-top:0vh;
+    padding:0vh;
+}
+
+.option_column{
+    
+    /* flex:20%; */
+    /* border:black solid 1vh; */
+    margin:0vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding-top: 0vh;
+    margin-top: 0vh;
+    /* position: fixed; */
+        justify-content: center;
+        width: 100vw;
+        /* margin-bottom: 1vh; */
+}
+.linechart-varied
+{
+    /* border:solid 1vh yellow; */
+    display:flex;
+    flex-direction: column;
+    padding:3vh;
+    
+    
+}
+
+section.homelayout_section{
+    margin:0vh;
+    /* margin-bottom: 1vh; */
+    /* border:solid brown 1vh; */
+    padding: 0vh;
+    margin-left:10vh;
+}
+
+button.ElectionType{
+    margin:1vh;
+    background-color: #fe5253;
+    color:white;
+    border-radius: 2.5vh;
+}
+

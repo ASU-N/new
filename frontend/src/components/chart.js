@@ -1,98 +1,74 @@
-// import React from 'react';
-// import Chart from 'react-apexcharts';
-// import {chart} from '../data/chart.js'
-// // import {timeStamp,timeVSVote}from '../data/chart';
 
 
+import React, { useEffect, useState } from 'react';
+import Chart from 'react-apexcharts'; 
+import ChartDB from '../data/chart.js';
+import './chart.css';
+import lodash from 'lodash';
 
-// function Linechart(electionData,id){
-          
+function Linechart({ partyNames, electionId, electionData, electionName }) {
+    const [timeVSVote, setTimeVSVote] = useState([]);
+    const [timeStamp, setTimeStamp] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-//     const {timeVSVote,timeStamp}=chart(electionData,id);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (partyNames.length === 0) {
+                    setLoading(false);
+                    return; 
+                }
 
+                const { timeVSVote, timeStamp } = await ChartDB(partyNames, electionId, electionData);
+                console.log('Timestamp for', electionId, timeStamp);
+                console.log('TimeVsVote', electionId, timeVSVote);
 
-//     return(
-//         <React.Fragment>
-//           <div className='graph'>
-//                 {/* <h2>Line Chart Using Apex-Chart using React</h2> */}
-//                 <Chart
-//                 type='line'
-//                 width={1000}
-//                 height={420}
-//                 series={timeVSVote}
-//                 options={{
-//                         title:{text:"Onlilne Voting-2024"},
-//                         xaxis:{
-//                             title:{text:"Time of Voting"},
-//                             categories:timeStamp
-//                         },
-//                         yaxis:{
-//                             title:{text:"Votes"}
-//                         },
-//                         stroke: {
-//                             width: 3,
-//                             curve: 'smooth'
-//                         },
-//                         grid: {
-//                             padding: {
-//                                 top: 5,
-//                                 bottom:10,
-//                                 left:30,
-//                                 right:5
-//                             }
-//                         },
-//                         chart: {
-//                         selection: {
-//                             enabled: false
-//                         }
-//                         },
-//                         legend:{
-//                             position:'right'
-//                         }
-//                         }}
+                setTimeVSVote(timeVSVote);
+                setTimeStamp(timeStamp);
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError(err); // Handle error
+            } finally {
+                setLoading(false); // Set loading to false regardless of success or failure
+            }
+        };
 
+        fetchData();
+    }, [partyNames, electionId, electionData]); 
 
-//                 >
-//                 </Chart>
-//           </div>
-//         </React.Fragment>
-//     )
-// };
-
-
-// export default Linechart;
-
-import React from 'react';
-import Chart from 'react-apexcharts';
-import ChartDB  from '../data/chart.js';
-
-
-//candidate ko array ra tyo election ko id cha
-function Linechart({ electionData, id ,data}) {
-    // Ensure that electionData is an array and id is valid
-    if (!Array.isArray(electionData) || electionData.length === 0) {
-        return <div>No data available for this election.</div>;
+    if (loading) {
+        return <div>Loading...</div>; 
     }
 
-    //partyko array pass gareko cha
-    const { timeVSVote, timeStamp } = ChartDB(electionData, id,data);
+    if (error) {
+        return <div>Error occurred: {error.message}</div>; 
+    }
+
+    if (timeStamp.length === 0 || timeVSVote.length === 0) {
+        return <div>No data available for {electionName}.</div>;
+    }
 
     return (
         <React.Fragment>
             <div className='graph'>
                 <Chart
+                    className="line-chart"
                     type='line'
-                    width={1000}
+                    width={1200}
                     height={420}
                     series={timeVSVote}
+                    // margin={ top:10, bottom:30, left:10, right:10  }
                     options={{
-                        title: { text: "Online Voting - 2024" },
+                        title: { text: electionName },
                         xaxis: {
                             title: { text: "Time of Voting" },
                             categories: timeStamp,
+                            offsetY:0
                         },
                         yaxis: {
                             title: { text: "Votes" },
+                            offsetX:0
                         },
                         stroke: {
                             width: 3,
@@ -100,9 +76,9 @@ function Linechart({ electionData, id ,data}) {
                         },
                         grid: {
                             padding: {
-                                top: 5,
-                                bottom: 10,
-                                left: 30,
+                                top: 10,
+                                bottom: 25,
+                                left: 75,
                                 right: 5,
                             },
                         },
@@ -110,18 +86,37 @@ function Linechart({ electionData, id ,data}) {
                             selection: {
                                 enabled: false,
                             },
+                            margin:{
+                                top:10,
+                                bottom:30,
+                                left:10,
+                                right:10
+                            }
                         },
                         legend: {
                             position: 'right',
                         },
                     }}
                 />
+                <div className='vote_column'>
+                    {console.log(timeVSVote)}
+                {timeVSVote.map((individual)=>{                    
+                   return(
+                     <section className="individual-section">
+                        <h3>{individual.name}</h3>
+                        <p>{lodash.sum(individual.data)}</p>
+                    </section>
+                   )
+                })}
             </div>
+            </div>
+           
         </React.Fragment>
     );
 }
 
 export default Linechart;
+
 
 
 

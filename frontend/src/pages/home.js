@@ -147,59 +147,6 @@ const Home = () => {
     fetchElections();
   }, []);
 
-  // console.log()
-
-  // return (
-    
-  //   <div className="home">
-  //     <h1>Election Dashboard</h1>
-  //     {isLoading ? (
-  //       <p>Loading elections...</p>
-  //     ) : error ? (
-  //       <p className="error-message">{error}</p>
-  //     ) : (
-  //       <div className="sections-container">
-  //       <div className="section_ongoing">
-  //                   <section className="home_section">
-  //                   <h2>Ongoing Elections</h2>
-  //                   {elections.ongoing.length > 0 ? (
-  //                     elections.ongoing.map((election) => (
-  //                       <ElectionCard key={election.id} election={election} type="ongoing"  />
-  //                     ))
-  //                   ) : (
-  //                     <p>No ongoing elections at the moment.</p>
-  //                   )}
-  //                 </section>
-  //       </div>
-
-  //          <div className="upcoming_past">
-  //             <section className="home_section">
-  //                       <h2>Upcoming Elections</h2>
-  //                       {elections.upcoming.length > 0 ? (
-  //                         elections.upcoming.map((election) => (
-  //                           <ElectionCard key={election.id} election={election} type="upcoming" />
-  //                         ))
-  //                       ) : (
-  //                         <p>No upcoming elections at the moment.</p>
-  //                       )}
-  //             </section>
-
-  //         <section className="home_section">
-  //           <h2>Past Elections</h2>
-  //           {elections.past.length > 0 ? (
-  //             elections.past.map((election) => (
-  //               <ElectionCard key={election.id} election={election} type="past" />
-  //             ))
-  //           ) : (
-  //             <p>No past elections available.</p>
-  //           )}
-  //         </section>  
-  //         </div>   
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
   return(
     <div className="home">
       <h1>Election Dashboard</h1>
