@@ -24,7 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 logging.basicConfig(level=logging.DEBUG)
 
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3000"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
 
 
 class Voter(db.Model):
