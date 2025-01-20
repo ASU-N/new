@@ -19,7 +19,7 @@ from datetime import timezone
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:sophiya123@localhost/voting_system'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = b'}XJ-\xb6\x9bx\xaf\x9c[\x0b\xcaj\xd2 D/y\xe9\x88\xae\xb7\xdb\x11'
 

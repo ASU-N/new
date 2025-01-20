@@ -17,6 +17,7 @@
     padding: 2vh;
     justify-content: space-between;
     position:fixed;
+    z-index: 100;
   }
   
   /* Logo and Links */
@@ -173,3 +174,6 @@
     background-color: #f0f0f0;
 }
 
+.logo-wrapper.active{
+  border: 0 !important;
+}

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import Linechart from '../components/chart.js';
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import './result.css'
+import './result.css';
 
 export default function Result() {
     const navigate = useNavigate();
@@ -11,6 +11,7 @@ export default function Result() {
     const [allPastElection, setAllPastElection] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedElection, setSelectedElection] = useState(electionId); // Track active tab
 
     const fetchPastElections = async () => {
         try {
@@ -23,10 +24,7 @@ export default function Result() {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            // console.log(response.json());
-            // console.log(response.data);
             const data = await response.json();
-            // console.log(data);
             setAllPastElection(data);
         } catch (err) {
             setError(err);
@@ -34,40 +32,55 @@ export default function Result() {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         fetchPastElections();
     }, []);
 
+    useEffect(() => {
+        if (electionId) {
+            const targetSection = document.getElementById(electionId);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, [electionId]);
+
     if (loading) return <div>Loading...</div>;
-    
+
     if (error) return <div>Error fetching past elections: {error.message}</div>;
 
-    // Function to render buttons for all past elections
     const CallAllPastElection = () => (
         <div className="option_column">
             {allPastElection.map((individual) => (
-                <button 
-                    key={individual.electionId} 
-                    className="ElectionType" 
-                    onClick={() => navigate(`/home/result/${individual.electionId}`)}
+                <a
+                    key={individual.electionId}
+                    href={`#${individual.electionId}`}
+                    className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
+                    onClick={() => setSelectedElection(individual.electionId)} // Update active state on click
                 >
                     {individual.electionName}
-                </button>
+                </a>
             ))}
         </div>
     );
 
     const electionArray = electionId ? allPastElection.filter(individual => individual.electionId === electionId) : [];
-    // console.log(electionArray);
 
     return (
         <div className="result-page">
             <CallAllPastElection />
             <div className="linechart-varied">
-                {(electionId ? electionArray : allPastElection).map((individual) => {
-                   
-                    return(<Linechart key={individual.electionId} partyNames={individual.party_names} electionId={individual.electionId} electionData={individual} electionName={individual.electionName}/>)
-                })}
+                {(electionId ? electionArray : allPastElection).map((individual) => (
+                    <div id={individual.electionId} key={individual.electionId}>
+                        <Linechart
+                            partyNames={individual.party_names}
+                            electionId={individual.electionId}
+                            electionData={individual}
+                            electionName={individual.electionName}
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );

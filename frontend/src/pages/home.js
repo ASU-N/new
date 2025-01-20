@@ -107,7 +107,7 @@ const handleClickOnGoing = async (data) => {
             View Results
           </a> */}
 
-          <Link to={`/home/result/${election.id}`}>View Result</Link>
+          <Link to={`/home/result/#${election.id}`}>View Result</Link>
         </>
       )}
     </div>

@@ -23,10 +23,12 @@ export default function HomeLayout() {
         <div className='root-layout'>
             <header>
                 <nav className='homeNavBar'>
-                    <div className='logo'>
-                        <img src={logo} alt='logo' />
-                        <p>OVS</p>
-                    </div>
+                    <NavLink to="/home" className="logo-wrapper">
+                        <div className='logo'>
+                            <img src={logo} alt='logo' />
+                            <p>OVS</p>
+                        </div>
+                    </NavLink>
                     <div className='navlink'>
                     <NavLink to="/home" className={({ isActive }) => (isActive ? "active" : "")}>Dashboard</NavLink>
                     <NavLink to="/home/result" className={({ isActive }) => (isActive ? "active" : "")}>Results</NavLink> 
