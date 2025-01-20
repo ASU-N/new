@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./home.css";
 
 var endTime=null,startTime=null;
@@ -27,24 +27,10 @@ const end =changeTime(election.end_date,election.end_time);
 const start=changeTime(election.start_date,election.start_time);
 
 
-    
-
 
 
 const handleClickOnGoing = async (data) => {
   
-    // useEffect(()=>{
-    //     if(start){
-    //         localStorage.setItem('startTime',start)
-    //     }
-    // },[start])
-
-    // useEffect(()=>{
-    //     if(end){
-    //         localStorage.setItem('endTime',end)
-    //     }
-    // },[end])
-
     localStorage.setItem('endTime',end);
     localStorage.setItem('startTime',start);
   
@@ -79,7 +65,7 @@ const handleClickOnGoing = async (data) => {
     }
 
 
-   } catch (error) {
+   } catch (error){
     alert(error.message)
    }
 
@@ -114,17 +100,14 @@ const handleClickOnGoing = async (data) => {
           </button>
         </>
       )}
-      {/* {type === "upcoming" && (
-        <button className="details-here" onClick={handleKYCClick}>
-          Details Here
-        </button>
-      )} */}
       {type === "past" && (
         <>
           <p>Winner: {election.winner}</p>
-          <a href={election.result_link} target="_blank" rel="noreferrer">
+          {/* <a href={} target="_blank" rel="noreferrer">
             View Results
-          </a>
+          </a> */}
+
+          <Link to={`/home/result/${election.id}`}>View Result</Link>
         </>
       )}
     </div>
@@ -164,10 +147,7 @@ const Home = () => {
     fetchElections();
   }, []);
 
-  // console.log()
-
-  return (
-    
+  return(
     <div className="home">
       <h1>Election Dashboard</h1>
       {isLoading ? (
@@ -176,32 +156,29 @@ const Home = () => {
         <p className="error-message">{error}</p>
       ) : (
         <div className="sections-container">
-        <div className="section_ongoing">
-                    <section className="home_section">
-                    <h2>Ongoing Elections</h2>
-                    {elections.ongoing.length > 0 ? (
-                      elections.ongoing.map((election) => (
-                        <ElectionCard key={election.id} election={election} type="ongoing"  />
-                      ))
-                    ) : (
-                      <p>No ongoing elections at the moment.</p>
-                    )}
-                  </section>
-        </div>
+          <section>
+            <h2>Ongoing Elections</h2>
+            {elections.ongoing.length > 0 ? (
+              elections.ongoing.map((election) => (
+                <ElectionCard key={election.id} election={election} type="ongoing" />
+              ))
+            ) : (
+              <p>No ongoing elections at the moment.</p>
+            )}
+          </section>
 
-           <div className="upcoming_past">
-              <section className="home_section">
-                        <h2>Upcoming Elections</h2>
-                        {elections.upcoming.length > 0 ? (
-                          elections.upcoming.map((election) => (
-                            <ElectionCard key={election.id} election={election} type="upcoming" />
-                          ))
-                        ) : (
-                          <p>No upcoming elections at the moment.</p>
-                        )}
-              </section>
+          <section>
+            <h2>Upcoming Elections</h2>
+            {elections.upcoming.length > 0 ? (
+              elections.upcoming.map((election) => (
+                <ElectionCard key={election.id} election={election} type="upcoming" />
+              ))
+            ) : (
+              <p>No upcoming elections at the moment.</p>
+            )}
+          </section>
 
-          <section className="home_section">
+          <section>
             <h2>Past Elections</h2>
             {elections.past.length > 0 ? (
               elections.past.map((election) => (
@@ -210,12 +187,12 @@ const Home = () => {
             ) : (
               <p>No past elections available.</p>
             )}
-          </section>  
-          </div>   
+          </section>
         </div>
       )}
     </div>
   );
+
 };
 
 export default Home;

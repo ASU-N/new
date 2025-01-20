@@ -15,19 +15,20 @@ body {
 
 .home {
   /* max-width: 1200px; */
-  margin: 0 auto;
+  margin: 0 20vh;
   /* padding: 5vh; */
   width: 90%;
   /* border:solid black 1vh; */
   background-color: #f4f6f8;
+  margin:2vw;
 }
 
 
 h1 {
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
-  font-size: 2.5rem;
-  /* margin-bottom: 20px; */
+  font-size: 2.1rem; 
+  /* /* margin-bottom: 20px; */
 }
 
 
@@ -36,34 +37,27 @@ h1 {
   justify-content: space-between;
   gap: 10px;
   /* flex-wrap: wrap; */
-  flex-direction: row;
+  flex-direction:column;
   /* margin-top: 30px; */
   /* border:solid red 1vh; */
 }
 
 
-div.sections-container div.section_ongoing{
-  flex:2;
-  /* border:solid black 1vh; */
-  height:100%;
-}
 
-div.sections-container div.upcoming_past{
-  flex:1;
-  display: flex;
-  flex-direction: column;
-}
+
+
 
 section {
   flex: 1;
   min-width: 250px;
   margin-top: 30px;
+  width:70%;
   /* border:yellow solid 1vh; */
 }
 
 h2 {
   color: #34495e;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   padding-left: 10px;
   margin-bottom: 15px;
 }
@@ -79,6 +73,7 @@ h2 {
   flex-direction: column;
   justify-content: space-between;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* background-color:#fe646f;; */
 }
 
 .election-card:hover {
@@ -184,6 +179,7 @@ section.home_section{
 
   .election-card {
     padding: 15px;
+   
   }
 
   .election-card h3 {

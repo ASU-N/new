@@ -4,31 +4,123 @@ import base64
 import cv2
 import numpy as np
 import face_recognition
-from flask import Flask, request, jsonify,make_response
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from datetime import datetime
-from wtforms import SelectField
-from flask import session
-from flask_admin import expose
-import json
+from datetime import timedelta
+from datetime import datetime 
+from dateutil import parser
+from datetime import timezone
 
+
+
+
+# Initialize Flask app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:anu123@localhost/voting_system'
-app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = b'}XJ-\xb6\x9bx\xaf\x9c[\x0b\xcaj\xd2 D/y\xe9\x88\xae\xb7\xdb\x11'
 
-
-logging.basicConfig(level=logging.DEBUG)
-
+# Initialize Extensions
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3000"], allow_headers=["Content-Type"], supports_credentials=True)
+
+# Logging setup
+logging.basicConfig(level=logging.INFO)
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        frame_data = data.get('frame')
+        voter_id = data.get('voter_id')
+
+        if not frame_data or not voter_id:
+            return jsonify({"message": "Missing frame data or voter ID"}), 400
+
+        imgdata = base64.b64decode(frame_data.split(',')[1])
+        nparr = np.frombuffer(imgdata, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        face_locations = face_recognition.face_locations(img)
+        if len(face_locations) != 1:
+            return jsonify({"message": "Please ensure only one face is visible for registration."}), 400
+
+        face_encoding = face_recognition.face_encodings(img, face_locations)[0]
+        face_encoding_bytes = face_encoding.tobytes()
+
+        if Voter.query.filter_by(voter_id=voter_id).first():
+            return jsonify({"message": "Voter ID is already registered."}), 400
+
+        voters = Voter.query.all()
+        for voter in voters:
+            db_face_encoding = np.frombuffer(voter.face_encoding, dtype=np.float64)
+            if face_recognition.compare_faces([db_face_encoding], face_encoding)[0]:
+                return jsonify({"message": "Face is already registered with another voter ID."}), 400
+
+        new_voter = Voter(voter_id=voter_id, face_encoding=face_encoding_bytes)
+        db.session.add(new_voter)
+        db.session.commit()
+
+        return jsonify({"message": "Registration successful!"})
+
+    except Exception as e:
+        app.logger.error(f"Error during registration: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        frame_data = data.get('frame')
+        voter_id = data.get('voter_id')
+
+        if not frame_data or not voter_id:
+            return jsonify({"message": "Missing frame data or voter ID"}), 400
+
+        imgdata = base64.b64decode(frame_data.split(',')[1])
+        nparr = np.frombuffer(imgdata, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        face_locations = face_recognition.face_locations(img)
+        if len(face_locations) != 1:
+            return jsonify({"message": "Please ensure only one face is visible for login."}), 400
+
+        login_face_encoding = face_recognition.face_encodings(img, face_locations)[0]
+
+        voter = Voter.query.filter_by(voter_id=voter_id).first()
+        if voter:
+            db_face_encoding = np.frombuffer(voter.face_encoding, dtype=np.float64)
+            matches = face_recognition.compare_faces([db_face_encoding], login_face_encoding)
+            if matches[0]:
+                return jsonify({"message": "Login successful"})
+            else:
+                return jsonify({"message": "Face did not match. Login failed."}), 400
+        else:
+            return jsonify({"message": "Voter ID not found in the database."}), 404
+
+    except Exception as e:
+        app.logger.error(f"Error during login: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    try:
+        return jsonify({"message": "Logged out successfully"})
+
+    except Exception as e:
+        app.logger.error(f"Error during logout: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+
+
 
 
 class Voter(db.Model):
-    voter_id = db.Column(db.String(255), primary_key=True)
+    voter_id = db.Column(db.Integer, primary_key=True)
     face_encoding = db.Column(db.LargeBinary, nullable=False)
 
 class Election(db.Model):
@@ -38,8 +130,6 @@ class Election(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
-    winner = db.Column(db.String(255), nullable=True)
-    result_link = db.Column(db.String(255), nullable=True)
     candidates = db.relationship('Candidate', back_populates='election')
 
 class Candidate(db.Model):
@@ -55,8 +145,78 @@ class Candidate(db.Model):
     election = db.relationship('Election', back_populates='candidates')
 
 
-with app.app_context():
-    db.create_all()
+from sqlalchemy import UniqueConstraint
+
+
+class Vote(db.Model):
+    __tablename__ = 'votes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    party_name = db.Column(db.String(255), nullable=False)
+    election_id = db.Column(db.Integer, db.ForeignKey('election.id'), nullable=False)
+    voter_id = db.Column(db.Integer, db.ForeignKey('voter.voter_id'), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    # Relationships
+    election = db.relationship('Election', backref=db.backref('votes', lazy=True))
+    voter = db.relationship('Voter', backref=db.backref('votes', lazy=True))
+
+    __table_args__ = (UniqueConstraint('voter_id', 'election_id', name='unique_voter_election'),)
+
+    def __init__(self, party_name, election_id, voter_id, timestamp):
+        self.party_name = party_name
+        self.election_id = election_id
+        self.voter_id = voter_id
+        self.timestamp = timestamp
+
+@app.route('/api/check_vote_data', methods=['POST'])
+def check_vote_data():
+    data = request.get_json()
+    print(data)
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    # Extract data and process vote
+    party_name = data.get('partyName')
+    election_id = data.get('electionId')
+    timestamp = data.get('timeStamp')
+    voter_id = data.get('voter_id')
+
+    # parsed_timestamp = parser.parse(timestamp) 
+
+    if not party_name or not election_id or not timestamp or not voter_id:
+        return jsonify({"error": "Missing required data"}), 400
+
+    try:
+        parsed_timestamp = parser.parse(timestamp)
+        # timestamp = datetime.fromisoformat(parsed_timestamp)
+
+        # Check if the voter has already voted in this election
+
+        existing_vote = Vote.query.filter_by(election_id=election_id, voter_id=voter_id).first()
+        if existing_vote:
+            return jsonify({"error": "Voter has already voted in this election"}), 400
+
+        # Perform database operations
+        election = Election.query.get(election_id)
+        if not election:
+            return jsonify({"error": "Election not found"}), 404
+
+        new_vote = Vote(party_name=party_name, election_id=election_id, timestamp=parsed_timestamp, voter_id=voter_id)
+        db.session.add(new_vote)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Vote recorded successfully!",
+            "partyName": party_name,
+            "electionId": election_id,
+            "voter_id": voter_id,
+            "timeStamp": parsed_timestamp
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Failed to record vote: {e}")  # Log the error
+        return jsonify({"error": f"Failed to record vote: {e}"}), 500
 
 
 class CandidateModelView(ModelView):
@@ -81,7 +241,6 @@ class VoterModelView(ModelView):
     can_delete = True   
 
     column_list = ['voter_id', 'face_encoding']  
-    column_exclude_list = ['face_encoding']  
     form_columns = ['voter_id', 'face_encoding']  
     
     def is_accessible(self):
@@ -100,83 +259,6 @@ admin = Admin(app, name='Election Admin', template_mode='bootstrap3')
 admin.add_view(CandidateModelView(Candidate, db.session))
 admin.add_view(ElectionModelView(Election, db.session))
 admin.add_view(VoterModelView(Voter, db.session)) 
-
-@app.route('/register', methods=['POST'])
-def register():
-    try:
-        data = request.json
-        frame_data = data['frame']
-        voter_id = data['voter_id']
-
-        
-        imgdata = base64.b64decode(frame_data.split(',')[1])
-        nparr = np.frombuffer(imgdata, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        face_locations = face_recognition.face_locations(img)
-        if len(face_locations) != 1:
-            return jsonify({"message": "Please ensure only one face is visible for registration."}), 400
-
-        face_encoding = face_recognition.face_encodings(img, face_locations)[0]
-        face_encoding_bytes = face_encoding.tobytes()
-
-        
-        voter = Voter.query.filter_by(voter_id=voter_id).first()
-        if voter:
-            return jsonify({"message": "Voter ID is already registered."}), 400
-
-        
-        new_voter = Voter(voter_id=voter_id, face_encoding=face_encoding_bytes)
-        db.session.add(new_voter)
-        db.session.commit()
-        session['voter_id'] = voter_id
-        return jsonify({"message": "Registration successful,and you are now logged in!"}), 200
-    except Exception as e:
-        app.logger.error(f"Error during registration: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/login', methods=['POST'])
-def login():
-    try:
-        data = request.json
-        frame_data = data['frame']
-        voter_id = data['voter_id']
-        imgdata = base64.b64decode(frame_data.split(',')[1])
-        nparr = np.frombuffer(imgdata, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        face_locations = face_recognition.face_locations(img)
-        if len(face_locations) != 1:
-            return jsonify({"message": "Please ensure only one face is visible for login."}), 400
-
-        login_face_encoding = face_recognition.face_encodings(img, face_locations)[0]
-
-    
-        voter = Voter.query.filter_by(voter_id=voter_id).first()
-        if voter:
-            db_face_encoding = np.frombuffer(voter.face_encoding, dtype=np.float64)
-            matches = face_recognition.compare_faces([db_face_encoding], login_face_encoding)
-            if matches[0]:
-                session['voter_id'] = voter_id
-                return jsonify({"message": "Login successful"}), 200
-            else:
-                return jsonify({"message": "Face did not match. Login failed."}), 400
-        else:
-            return jsonify({"message": "Voter ID not found in the database."}), 404
-    except Exception as e:
-        app.logger.error(f"Error during login: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    try:
-        
-        session.pop('voter_id', None)
-        return jsonify({"message": "Logged out successfully"}), 200
-    except Exception as e:
-        app.logger.error(f"Error during logout: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
 
 
 from datetime import datetime
@@ -240,8 +322,7 @@ def get_elections():
                     "start_time": start_time.strftime("%H:%M:%S"),
                     "end_date": end_date.strftime("%Y-%m-%d"),
                     "end_time": end_time.strftime("%H:%M:%S"),
-                    "winner": election.winner or "TBD",
-                    "result_link": election.result_link or "No link available",
+
                     "candidates": candidate_list
                 })
             else:
@@ -280,7 +361,6 @@ def get_candidates():
             'name': candidate.name,
             'manifesto': candidate.manifesto,
             'photo_url': candidate.photo_url,
-            'votes': candidate.votes,
             'age': candidate.age,  
             'status': candidate.status,  
             'education': candidate.education,
@@ -289,49 +369,6 @@ def get_candidates():
     except Exception as e:
         app.logger.error(f"Error fetching candidates: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-@app.route('/api/election/<int:election_id>/candidates', methods=['GET'])
-def get_candidates_by_election(election_id):
-    try:
-        
-        election = Election.query.filter_by(id=election_id).first()
-        if not election:
-            return jsonify({"message": "Election not found"}), 404
-
-        
-        candidates = Candidate.query.filter_by(election_id=election_id).all()
-        if not candidates:
-            return jsonify({"message": "No candidates found for this election"}), 404
-
-        
-        response = {
-            "election_id": election.id,
-            "election_name": election.name,
-            "start_date": election.start_date.strftime("%Y-%m-%d"),
-            "start_time": election.start_time.strftime("%H:%M:%S"),
-            "end_date": election.end_date.strftime("%Y-%m-%d"),
-            "end_time": election.end_time.strftime("%H:%M:%S"),
-            "candidates": [
-                {
-                    "id": candidate.id,
-                    "name": candidate.name,
-                    "manifesto": candidate.manifesto,
-                    "photo_url": candidate.photo_url,
-                    "votes": candidate.votes,
-                    "age": candidate.age,
-                    "status": candidate.status,
-                    "education": candidate.education,
-                    "party": candidate.party,
-                }
-                for candidate in candidates
-            ],
-        }
-        return jsonify(response), 200
-    except Exception as e:
-        app.logger.error(f"Error fetching candidates for election {election_id}: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-
 
 
 
@@ -449,6 +486,73 @@ def get_all_candidates():
     except Exception as e:
         print("Exception Occurred:", str(e))
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+    
+@app.route('/api/votes', methods=['GET'])
+def get_votes():
+    try:
+        # Fetch all votes from the database
+        votes = Vote.query.all()
+        
+        # Convert the vote data to a list of dictionaries (objects) 
+        votes_data = []
+        for vote in votes:
+            vote_data = {
+                "partyName": vote.party_name,
+                "electionId": vote.election_id,
+                "timeStamp": vote.timestamp.isoformat()
+            }
+            votes_data.append(vote_data)
+        
+        return jsonify(votes_data), 200
+    except Exception as e:
+        logging.error(f"Failed to fetch votes: {e}")
+        return jsonify({"error": "Failed to fetch votes"}), 500
+    
+@app.route('/PastElection', methods=['GET'])
+def get_past_elections():
+    try:
+        current_time = datetime.now(timezone.utc)  # Current UTC time
+        app.logger.debug(f"Current UTC time: {current_time}")
+
+        # Fetch all elections
+        elections = Election.query.all()
+
+        # Filter for past elections
+        past_elections = []
+        for election in elections:
+            start_date = election.start_date
+            start_time = election.start_time
+            end_date = election.end_date
+            end_time = election.end_time
+
+            # Combine date and time
+            start_datetime = datetime.combine(start_date, start_time, tzinfo=timezone.utc)
+            end_datetime = datetime.combine(end_date, end_time, tzinfo=timezone.utc)
+
+            app.logger.debug(f"Checking election {election.name} - Start (UTC): {start_datetime}, End (UTC): {end_datetime}")
+
+            if current_time > end_datetime:
+                # Gather party names for the election from candidates
+                party_names = [candidate.party for candidate in election.candidates]
+
+                # Append required fields including start and end timestamps and party names
+                past_elections.append({
+                    "electionId": election.id,
+                    "electionName": election.name,
+                    "start_time": start_datetime.isoformat().replace("+00:00", "Z"),  # Ensure Z for UTC
+                    "end_time": end_datetime.isoformat().replace("+00:00", "Z"),    # Ensure Z for UTC
+                    "party_names": party_names
+                })
+
+        app.logger.debug(f"Past elections: {past_elections}")
+
+        return jsonify(past_elections), 200
+
+
+    except Exception as e:
+        app.logger.error(f"Error fetching past elections: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == '__main__':

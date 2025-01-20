@@ -33,17 +33,27 @@ const Login = () => {
         return canvas.toDataURL('image/jpeg');
     };
 
-    const sendFrameToBackend = (frame, action) => {
-        axios.post(`http://localhost:5000/${action}`, { frame, voter_id: votingId })
+      const sendFrameToBackend = (frame, action) => {
+        console.log("Sending data: ", { frame, voter_id: votingId });  // Log the data you're sending to the backend
+        axios.post(`http://localhost:5000/${action}`, { frame, voter_id: votingId }, { withCredentials: true })
             .then(response => {
                 console.log("Response: ", response.data);
-                alert(response.data.message); 
+                alert(response.data.message); // Display the backend's message
+       
                 if (response.data.message.includes('successful')) {
-                    navigate('/home');  
+                    navigate('/home');
                 }
             })
-            .catch(error => console.error("Error: ", error));
+            .catch(error => {
+                console.error("Error: ", error.response || error);  // Log detailed error info
+                if (error.response && error.response.data && error.response.data.message) {
+                    alert(error.response.data.message); // Display the backend's error message
+                } else {
+                    alert("An unexpected error occurred. Please try again."); // Fallback error message
+                }
+            });
     };
+
 
     const handleToggle = (text) => {
         setAction(text.toLowerCase());

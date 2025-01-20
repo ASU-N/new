@@ -44,9 +44,24 @@ export default   function Election()
     const clickButton=async(partyName,id)=>{
 
         const currentTime= new Date();
-
-        const json={timeStamp:currentTime.toISOString(),partyName, electionId:id}
+        const json={timeStamp:currentTime.toISOString(),partyName:partyName, electionId:id, voter_id:34}
         console.log(json);
+
+        const response=await fetch('http://localhost:5000/api/check_vote_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(json)
+        });
+
+        // const response = await axios.post('http://localhost:5000/api/check_vote_data', json, {
+        //     headers: {
+        //         'Content-Type': 'application/json', // Ensure this is set correctly
+        //     }
+        // });
+
+        console.log(response);
         
 
     

@@ -1,160 +1,4 @@
 
-/* .root-layout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: #f4f7fb;
-  }
-
-  .root-layout header nav.homeNavBar {
-    display: flex;
-    width: 100vw;
-    height: 8vh;
-    background-color: #002b6a;
-    box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.1);
-    align-items: center;
-    padding: 2vh;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-  }
-  
-  .root-layout header nav div.logo {
-    display: flex;
-    position: fixed;
-    left: 2vh;
-    align-items: center;
-    color: white;
-  }
-  
-  .root-layout header nav div.logo img {
-    width: 4vh;
-    height: 4vh;
-    margin: 0.5vh;
-  }
-  
-  /* .root-layout nav.homeNavBar a {
-    padding: 1vh;
-    text-decoration: none;
-    margin: 2vh;
-    color: white;
-    font-weight: 500;
-  }
-  
-  .root-layout nav.homeNavBar a:hover {
-    color: #1abc9c;
-  }
-  
-  .root-layout nav.homeNavBar a.active {
-    color: #1abc9c;
-    border-bottom: 2px solid #1abc9c;
-  } */
-
-      /* .root-layout nav.homeNavBar a{
-        padding:1vh;
-        text-decoration: none;
-        margin:2vh;
-        color:white;
-        border:  0.1vh solid white 
-    }
-    
-    .root-layout nav.homeNavBar a:hover{
-        color:#5cb9c8;
-        border:0.1vh solid #5cb9c8;
-    }
-    
-    .root-layout nav.homeNavBar a.active{
-        color:#5cb9c8;
-        border:0.1vh solid #5cb9c8;
-    }
-  
-  .root-layout header nav.homeNavBar button {
-    position: fixed;
-    right: 2vh;
-    width: 7vh;
-    height: 7vh;
-    border-radius: 50%;
-    background-color: #2980b9;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .root-layout header nav.homeNavBar button img {
-    width: 5vh;
-    height: 5vh;
-    border-radius: 50%;
-  }  */
-  
-  /* Main Content */
-  /* .root-layout main {
-    display: flex;
-    flex-direction: row;
-    margin-top: 8vh;
-  } */
-  
-  /* Section for Content */
-  /* .root-layout main section {
-    flex: 80%;
-    margin: 3vw;
-    display: flex;
-    flex-direction: column;
-    padding: 2vh;
-    background-color: #ffffff;
-    box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .root-layout main nav.timerNavBar {
-    width: 20%;
-    background-color: #ecf0f1;
-    padding: 2vh;
-    margin-left: 3vw;
-    box-shadow: -1vh 0 2vh rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-   */
-  /* Timer Nav Bar - Centering Text */
-  /* .root-layout main nav.timerNavBar h1 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #115ca8;
-  } */
-  
-  /* Countdown Timer Styling */
-  /* .root-layout main nav.timerNavBar .countdown {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .root-layout main nav.timerNavBar .countdown div {
-    background-color: #2980b9;
-    color: white;
-    margin: 2vh;
-    padding: 2vh;
-    display: flex;
-    flex-direction: column;
-    height: 18vh;
-    border-radius: 12px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .root-layout main nav.timerNavBar .countdown div .secondary-box {
-    font-size: 5vh;
-  }
-  
-  .root-layout main nav.timerNavBar .countdown div p {
-    font-size: 1.2rem;
-    margin-top: 1vh;
-    font-weight: 400;
-  }
-   */
-
-   /* Root Layout */
 .root-layout {
     display: flex;
     flex-direction: column;
@@ -188,23 +32,6 @@
     margin: 0.5vh;
   }
   
-  /* .root-layout nav.homeNavBar a {
-    padding: 1vh;
-    text-decoration: none;
-    margin: 2vh;
-    color: white;
-    font-weight: 500;
-  }
-  
-  .root-layout nav.homeNavBar a:hover {
-    color: #1abc9c;
-  }
-  
-  .root-layout nav.homeNavBar a.active {
-    color: #1abc9c;
-    border-bottom: 2px solid #1abc9c;
-  } */
-
   .root-layout nav.homeNavBar a{
         padding:1vh;
         text-decoration: none;
@@ -228,7 +55,7 @@
     width: 7vh;
     height: 7vh;
     border-radius: 50%;
-    background-color: #2980b9;
+    background-color: white;
     border: none;
     display: flex;
     justify-content: center;
@@ -251,7 +78,6 @@
   /* Section for Content */
   .root-layout main section.homelayout_section{
     flex: 80%;
-    margin: 3vw;
     display: flex;
     flex-direction: column;
     padding: 2vh;
@@ -261,6 +87,7 @@
     overflow: hidden;
     /* border:solid black 1vh; */
   background-color: #f4f6f8;
+
   }
   
   .root-layout main nav.timerNavBar {
@@ -345,3 +172,4 @@
 .dropdown button:hover {
     background-color: #f0f0f0;
 }
+
