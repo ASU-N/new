@@ -172,7 +172,7 @@ class Vote(db.Model):
 @app.route('/api/check_vote_data', methods=['POST'])
 def check_vote_data():
     data = request.get_json()
-    print(data)
+    print('Check Vote',data)
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
@@ -181,7 +181,8 @@ def check_vote_data():
     election_id = data.get('electionId')
     timestamp = data.get('timeStamp')
     voter_id = data.get('voter_id')
-
+    print('Type of votersId',type(voter_id))
+    
     # parsed_timestamp = parser.parse(timestamp) 
 
     if not party_name or not election_id or not timestamp or not voter_id:
@@ -193,7 +194,7 @@ def check_vote_data():
 
         # Check if the voter has already voted in this election
 
-        existing_vote = Vote.query.filter_by(election_id=election_id, voter_id=voter_id).first()
+        existing_vote = Vote.query.filter_by(election_id=election_id, voter_id=int(voter_id)).first()
         if existing_vote:
             return jsonify({"error": "Voter has already voted in this election"}), 400
 
@@ -202,7 +203,9 @@ def check_vote_data():
         if not election:
             return jsonify({"error": "Election not found"}), 404
 
-        new_vote = Vote(party_name=party_name, election_id=election_id, timestamp=parsed_timestamp, voter_id=voter_id)
+
+
+        new_vote = Vote(party_name=party_name, election_id=election_id, timestamp=parsed_timestamp, voter_id=int(voter_id))
         db.session.add(new_vote)
         db.session.commit()
 
@@ -254,6 +257,16 @@ class VoterModelView(ModelView):
 
 class ElectionModelView(ModelView):
     inline_models = [Candidate]
+    form_columns = ['name', 'start_date', 'start_time', 'end_date', 'end_time', 'candidates']
+    def __init__(self, model, session, **kwargs):
+        super(ElectionModelView, self).__init__(model, session, **kwargs)
+        self.form_args = {
+            'candidates': {
+                'query_factory': lambda: Candidate.query.all(),
+                'allow_blank': False,
+                'label': 'Candidates'  
+            }
+        }
 
 admin = Admin(app, name='Election Admin', template_mode='bootstrap3')
 admin.add_view(CandidateModelView(Candidate, db.session))
@@ -516,6 +529,14 @@ def get_past_elections():
 
         # Fetch all elections
         elections = Election.query.all()
+        print('Past Election Query All',elections)
+
+
+        print('Past Election Query All:')
+        for election in elections:
+            print(f"Election ID: {election.id}, Name: {election.name}, "
+                  f"Start Date: {election.start_date}, End Date: {election.end_date}, "
+                  f"Start Time: {election.start_time}, End Time: {election.end_time}")
 
         # Filter for past elections
         past_elections = []
@@ -543,6 +564,9 @@ def get_past_elections():
                     "end_time": end_datetime.isoformat().replace("+00:00", "Z"),    # Ensure Z for UTC
                     "party_names": party_names
                 })
+
+                print(past_elections)
+               
 
         app.logger.debug(f"Past elections: {past_elections}")
 

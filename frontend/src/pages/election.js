@@ -2,6 +2,7 @@ import './election.css';
 import {useState,useEffect} from 'react';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { useNavigate } from 'react-router-dom';
 
 
 export default   function Election()
@@ -9,6 +10,7 @@ export default   function Election()
 
     const [candidate,setCandidate]=useState([]);
     const [electionId,setElectionId]=useState();
+    const Navigate=useNavigate();
 
     
     useEffect(()=>{
@@ -20,15 +22,7 @@ export default   function Election()
                     const data=await response.data;
                     console.log(data);
 
-                    const secretKey='anujacodes'
-                    // const encryptedId=sessionStorage.getItem('electionId');
-                    // console.log(encryptedId);
-
-                    // const bytes = CryptoJS.AES.decrypt(encryptedId, secretKey);
-                    // // console.log(bytes);
-                    // const decryptedId=bytes.toString(CryptoJS.enc.Utf8);
-                    // console.log(decryptedId);
-                    const id=sessionStorage.getItem('electionId')
+                   const id=sessionStorage.getItem('electionId')
                     const correct_data=data[id];
                     
                     // const correct_data=data[decryptedId];
@@ -74,8 +68,20 @@ export default   function Election()
         body: JSON.stringify(json)
         });
 
+        const response_data=await response.json();
+        console.log(response_data);
 
-        console.log(response);
+        console.log(response_data);
+        if(response.status===400)
+        {
+            alert(response_data.error);
+            Navigate('/home');
+        }
+        else
+        {
+            alert(response_data.message);
+            Navigate('/home');
+        }
         
 
     

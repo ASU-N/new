@@ -26,6 +26,7 @@ export default function Result() {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            console.log('Respnse data',data);
             setAllPastElection(data);
         } catch (err) {
             setError(err);
