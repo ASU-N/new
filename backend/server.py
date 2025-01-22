@@ -25,7 +25,7 @@ app.config['SECRET_KEY'] = b'}XJ-\xb6\x9bx\xaf\x9c[\x0b\xcaj\xd2 D/y\xe9\x88\xae
 
 # Initialize Extensions
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3000"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -538,7 +538,7 @@ def get_past_elections():
                   f"Start Date: {election.start_date}, End Date: {election.end_date}, "
                   f"Start Time: {election.start_time}, End Time: {election.end_time}")
 
-        # Filter for past elections
+
         past_elections = []
         for election in elections:
             start_date = election.start_date
@@ -549,8 +549,14 @@ def get_past_elections():
             # Combine date and time
             start_datetime = datetime.combine(start_date, start_time, tzinfo=timezone.utc)
             end_datetime = datetime.combine(end_date, end_time, tzinfo=timezone.utc)
+            
+            print(start_datetime)
+            print(end_datetime)
 
             app.logger.debug(f"Checking election {election.name} - Start (UTC): {start_datetime}, End (UTC): {end_datetime}")
+
+            # print(type(end_datetime))
+            # print(type(current_time))
 
             if current_time > end_datetime:
                 # Gather party names for the election from candidates

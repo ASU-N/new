@@ -45,11 +45,11 @@ export default function ElectionLayout() {
         <div className='election-layout'>
             <header>
                 <nav className='electionNavBar'>
-                    <div className='logo'>
-                        <img src={logo} alt='logo' />
-                        <p>OVS</p>
-                    </div>
-                    <Link to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</Link>
+                        <div className='logo'>
+                            <img src={logo} alt='logo' />
+                            <p>OVS</p>
+                        </div>
+                    <NavLink to="/election" className={({ isActive }) => (isActive ? "active" : "")}>Home</NavLink>
                     <NavLink to="/election/kyc" className={({ isActive }) => (isActive ? "active" : "")}>Know Your Candidates</NavLink>
                     <NavLink to="/election/guidelines" className={({ isActive }) => (isActive ? "active" : "")}>Guidelines</NavLink>
                     <NavLink to="/home">Back</NavLink>

@@ -79,7 +79,11 @@ export default function Result() {
 
     console.log('ElectionArray',electionArray);
 
-    return (
+    const votingId=sessionStorage.getItem('votingId');
+
+    if(votingId)
+    {
+            return (
         <div className="result-page">
             <CallAllPastElection />
             <div className="linechart-varied">
@@ -96,4 +100,12 @@ export default function Result() {
             </div>
         </div>
     );
+    }
+
+    else
+    {
+    window.alert("VotingId has expired. You have to Login again.");
+    navigate('/'); 
+    }
+
 }

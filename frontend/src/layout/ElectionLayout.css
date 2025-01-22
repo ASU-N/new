@@ -47,7 +47,10 @@
         border-radius: 50%;
     }
     
-    
+   .election-layout nav.electionNavBar .logo-wrapper{
+    border:solid 1vh black;
+    align-self: start;
+   } 
     
     .election-layout main nav.timerNavBar{
     width: 18vw;

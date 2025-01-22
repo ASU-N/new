@@ -2,12 +2,13 @@
 import '../css/styles.css';
 import {useState,useEffect} from 'react';
 import axios from 'axios';
-// import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 function Kyc(){   
    
     const [candidate,setCandidate]=useState([]);
+      const navigate = useNavigate();
 
        
     
@@ -37,8 +38,9 @@ function Kyc(){
 
     },[])
        
-   
-   
+const votingId=sessionStorage.getItem('votingId');
+if(votingId)
+{
     return(
         <div>
             <div className="content">
@@ -81,6 +83,16 @@ function Kyc(){
         </div>
         
     );
+    
+}
+
+else
+{
+    window.alert("VotingId has expired. You have to Login again.");
+    navigate('/'); 
+}
+   
+
 }
 
 export default Kyc;

@@ -15,8 +15,8 @@ export default function HomeLayout() {
 
     const handleLogout = () => {
         console.log("Logged out");
-        // Perform logout logic if needed, e.g., clearing localStorage or cookies
-        navigate('/'); // Redirect to login page
+        sessionStorage.removeItem('votingId');
+        navigate('/'); 
     };
 
     return (

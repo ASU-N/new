@@ -77,6 +77,8 @@ const handleClickOnGoing = async (data) => {
 
 };
 
+const votingId=sessionStorage.getItem('votingId');
+  if(votingId)
   return (
     <div className={`election-card ${type}`}>
       <h3>{election.name}</h3>
@@ -105,12 +107,16 @@ const handleClickOnGoing = async (data) => {
       )}
       {type === "past" && (
         <>
-          <p>Winner: {election.winner}</p>
           <Link to={`/home/result/${election.id}`}>View Result</Link>
         </>
       )}
     </div>
   );
+else
+{
+           window.alert("VotingId has expired. You have to Login again.");
+     navigate('/'); 
+}
 };
 
 const Home = () => {

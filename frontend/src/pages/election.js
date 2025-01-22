@@ -5,12 +5,14 @@ import CryptoJS from 'crypto-js';
 import { useNavigate } from 'react-router-dom';
 
 
+
 export default   function Election()
 {
 
+    const Navigate=useNavigate();
     const [candidate,setCandidate]=useState([]);
     const [electionId,setElectionId]=useState();
-    const Navigate=useNavigate();
+    
 
     
     useEffect(()=>{
@@ -88,7 +90,10 @@ export default   function Election()
     }
 
    
-    return(
+    const votingId=sessionStorage.getItem('votingId')
+    if(votingId)
+    {
+            return(
        <div className="votingSection">
             {candidate.map((individual)=>{
                 console.log(individual);
@@ -111,6 +116,14 @@ export default   function Election()
 
 
     )
+    }    
+
+  else
+  {
+    window.alert("VotingId has expired. You have to Login again.");
+    Navigate('/'); 
+  }
+    
 
 
 }

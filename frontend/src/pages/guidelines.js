@@ -1,7 +1,15 @@
 import '../css/styles.css';
+// import { useNavigate } from 'react-router-dom';
+import React from 'react';
+
 export default function guidelines()
 {
-    return(
+
+
+const votingId=sessionStorage.getItem('votingId')
+
+
+return(
 
         <div className="content">
             <h2>Online Voting System Guidelines</h2>
@@ -37,6 +45,9 @@ export default function guidelines()
             </div>
         </div>
     
-)
-
+)    
 }
+
+
+
+
