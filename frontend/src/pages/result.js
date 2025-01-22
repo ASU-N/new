@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import './result.css';
 
+
 export default function Result() {
     const navigate = useNavigate();
     const params = useParams();
@@ -57,7 +58,7 @@ export default function Result() {
                     key={individual.electionId}
                     href={`#${individual.electionId}`}
                     className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
-                    onClick={() => setSelectedElection(individual.electionId)} // Update active state on click
+                    onClick={() => setSelectedElection(individual.electionId)}
                 >
                     {individual.electionName}
                 </a>

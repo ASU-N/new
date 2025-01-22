@@ -201,3 +201,13 @@ section.home_section{
     gap: 10px; 
   }
 }
+.no-election-message {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left; 
+  font-size: 1.1rem;
+  color: #666;
+}
