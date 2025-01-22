@@ -169,7 +169,7 @@ const Home = () => {
                 <ElectionCard key={election.id} election={election} type="ongoing" />
               ))
             ) : (
-              <p>No ongoing elections at the moment.</p>
+              <p className="no-election-message">No ongoing elections at the moment.</p>
             )}
           </section>
 
@@ -180,7 +180,7 @@ const Home = () => {
                 <ElectionCard key={election.id} election={election} type="upcoming" />
               ))
             ) : (
-              <p>No upcoming elections at the moment.</p>
+              <p className="no-election-message">No upcoming elections at the moment.</p>
             )}
           </section>
 
@@ -191,7 +191,7 @@ const Home = () => {
                 <ElectionCard key={election.id} election={election} type="past" />
               ))
             ) : (
-              <p>No past elections available.</p>
+              <p className="no-election-message">No past elections available.</p>
             )}
           </section>
         </div>

@@ -22,7 +22,7 @@
         width: 100vw;
         /* margin-bottom: 1vh; */
     position: fixed;
-    z-index: 100;
+    z-index: 9;
     background-color: white;
     top: 60px;
     left: 0px;

@@ -162,6 +162,7 @@
 
 .dropdown button {
     padding: 10px 20px;
+    z-index: 10;
     border: none;
     background: none;
     cursor: pointer;
