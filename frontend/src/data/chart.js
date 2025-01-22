@@ -20,10 +20,10 @@ const createResultArray = async (electionId) => {
 
 const createArray = async (party, election, id, timeVSVote, time_stamp) => {
     const result_data = await createResultArray(id);
-    console.log(`Result of specific ${id} and ${party}`, result_data);
+    // console.log(`Result of specific ${id} and ${party}`, result_data);
     const start = new Date(election.start_time);
     const end = new Date(election.end_time);
-    console.log(start, end);
+    // console.log(start, end);
     const i = new Date(start);
     const vote_array = [];
 
@@ -49,7 +49,7 @@ const createArray = async (party, election, id, timeVSVote, time_stamp) => {
     }
 
     timeVSVote.push({ name: party, data: vote_array });
-    console.log('Result of timeVsVote and timeStamp', timeVSVote, time_stamp);
+    // console.log('Result of timeVsVote and timeStamp', timeVSVote, time_stamp);
 }
 
 const ChartDB = async (partyName, electionId, electionData) => {
@@ -66,7 +66,7 @@ const ChartDB = async (partyName, electionId, electionData) => {
         return new Date(item).toISOString();
     });
 
-    console.log('Before Sending to Apex Chart', timeStamp, timeVSVote, 'For ElectionId', electionId);
+    // console.log('Before Sending to Apex Chart', timeStamp, timeVSVote, 'For ElectionId', electionId);
 
     return { timeVSVote, timeStamp };
 }

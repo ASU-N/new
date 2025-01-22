@@ -114,8 +114,9 @@ const votingId=sessionStorage.getItem('votingId');
   );
 else
 {
-           window.alert("VotingId has expired. You have to Login again.");
+          
      navigate('/'); 
+    window.alert("VotingId has expired. You have to Login again.");
 }
 };
 

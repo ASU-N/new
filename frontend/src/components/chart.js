@@ -21,8 +21,8 @@ function Linechart({ partyNames, electionId, electionData, electionName }) {
                 }
 
                 const { timeVSVote, timeStamp } = await ChartDB(partyNames, electionId, electionData);
-                console.log('Timestamp for', electionId, timeStamp);
-                console.log('TimeVsVote', electionId, timeVSVote);
+                // console.log('Timestamp for', electionId, timeStamp);
+                // console.log('TimeVsVote', electionId, timeVSVote);
 
                 setTimeVSVote(timeVSVote);
                 setTimeStamp(timeStamp);
@@ -104,7 +104,7 @@ function Linechart({ partyNames, electionId, electionData, electionName }) {
 
                 />
                 <div className='vote_column'>
-                    {console.log(timeVSVote)}
+                    {/* {console.log(timeVSVote)} */}
                 {timeVSVote.map((individual)=>{                    
                    return(
                      <section className="individual-section">

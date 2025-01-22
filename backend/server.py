@@ -529,14 +529,14 @@ def get_past_elections():
 
         # Fetch all elections
         elections = Election.query.all()
-        print('Past Election Query All',elections)
+        # print('Past Election Query All',elections)
 
 
-        print('Past Election Query All:')
-        for election in elections:
-            print(f"Election ID: {election.id}, Name: {election.name}, "
-                  f"Start Date: {election.start_date}, End Date: {election.end_date}, "
-                  f"Start Time: {election.start_time}, End Time: {election.end_time}")
+        # print('Past Election Query All:')
+        # for election in elections:
+        #     print(f"Election ID: {election.id}, Name: {election.name}, "
+        #           f"Start Date: {election.start_date}, End Date: {election.end_date}, "
+        #           f"Start Time: {election.start_time}, End Time: {election.end_time}")
 
 
         past_elections = []
@@ -547,19 +547,26 @@ def get_past_elections():
             end_time = election.end_time
 
             # Combine date and time
+            combine_s=f"{start_date} {start_time}"
+            dt_st = datetime.strptime(combine_s, "%Y-%m-%d %H:%M:%S")
+            timestamp_s = dt_st.timestamp()
+
+            combine_e=f"{end_date} {end_time}"
+            dt_en = datetime.strptime(combine_e, "%Y-%m-%d %H:%M:%S")
+            timestamp_e = dt_en.timestamp()
+
+            dt_from_timestamp_s = datetime.fromtimestamp(timestamp_s, tz=timezone.utc)
+            dt_from_timestamp_e=datetime.fromtimestamp(timestamp_e,tz=timezone.utc)
+
+
             start_datetime = datetime.combine(start_date, start_time, tzinfo=timezone.utc)
             end_datetime = datetime.combine(end_date, end_time, tzinfo=timezone.utc)
             
-            print(start_datetime)
-            print(end_datetime)
+            # print('End Time Stamp',dt_from_timestamp_e)
+            # print('Start Time Stamp',dt_from_timestamp_s)
+            # print('Current Time Stamp',current_time)
 
-            app.logger.debug(f"Checking election {election.name} - Start (UTC): {start_datetime}, End (UTC): {end_datetime}")
-
-            # print(type(end_datetime))
-            # print(type(current_time))
-
-            if current_time > end_datetime:
-                # Gather party names for the election from candidates
+            if current_time > dt_from_timestamp_e:
                 party_names = [candidate.party for candidate in election.candidates]
 
                 # Append required fields including start and end timestamps and party names
