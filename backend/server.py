@@ -25,7 +25,7 @@ app.config['SECRET_KEY'] = b'}XJ-\xb6\x9bx\xaf\x9c[\x0b\xcaj\xd2 D/y\xe9\x88\xae
 
 # Initialize Extensions
 db = SQLAlchemy(app)
-CORS(app, origins=["http://localhost:3002"], allow_headers=["Content-Type"], supports_credentials=True)
+CORS(app, origins=["http://localhost:3003"], allow_headers=["Content-Type"], supports_credentials=True)
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
