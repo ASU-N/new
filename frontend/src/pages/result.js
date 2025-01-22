@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import './result.css';
 
-
 export default function Result() {
     const navigate = useNavigate();
     const params = useParams();
@@ -63,23 +62,12 @@ export default function Result() {
             All
         </Link>
             {allPastElection.map((individual) => (
-<<<<<<< HEAD
             <Link
                 key={individual.electionId}
                 to={`/home/result/${individual.electionId}`} 
                 className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
                 onClick={() => setSelectedElection(individual.electionId)} 
             >{individual.electionName}</Link>
-=======
-                <a
-                    key={individual.electionId}
-                    href={`#${individual.electionId}`}
-                    className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
-                    onClick={() => setSelectedElection(individual.electionId)}
-                >
-                    {individual.electionName}
-                </a>
->>>>>>> sophiya-new
             ))}
         </div>
     );
