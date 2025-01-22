@@ -21,6 +21,8 @@ body {
   /* border:solid black 1vh; */
   background-color: #f4f6f8;
   margin:2vw;
+  margin-left:5vw;
+  margin-top: 1.5vw;
 }
 
 
@@ -58,7 +60,7 @@ section {
 h2 {
   color: #34495e;
   font-size: 1.7rem;
-  padding-left: 10px;
+  /* padding-left: 10px; */
   margin-bottom: 15px;
 }
 

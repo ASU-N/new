@@ -1,7 +1,8 @@
 import './election.css';
 import {useState,useEffect} from 'react';
 import axios from 'axios';
-// import { useLocation } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
+
 
 export default   function Election()
 {
@@ -9,19 +10,28 @@ export default   function Election()
     const [candidate,setCandidate]=useState([]);
     const [electionId,setElectionId]=useState();
 
-
-    // const location=useLocation();
-    // console.log('Election Id after Clicking',location.state);
-       
     
     useEffect(()=>{
         const fetchData=async()=>{
             try {
                 const response=await axios.get('http://localhost:5000/api/candidates/list');
+                console.log(response);
 
                     const data=await response.data;
+                    console.log(data);
+
+                    const secretKey='anujacodes'
+                    // const encryptedId=sessionStorage.getItem('electionId');
+                    // console.log(encryptedId);
+
+                    // const bytes = CryptoJS.AES.decrypt(encryptedId, secretKey);
+                    // // console.log(bytes);
+                    // const decryptedId=bytes.toString(CryptoJS.enc.Utf8);
+                    // console.log(decryptedId);
                     const id=sessionStorage.getItem('electionId')
                     const correct_data=data[id];
+                    
+                    // const correct_data=data[decryptedId];
                     
                     setElectionId(correct_data.electionId);
                     setCandidate(correct_data.candidate);
@@ -44,7 +54,16 @@ export default   function Election()
     const clickButton=async(partyName,id)=>{
 
         const currentTime= new Date();
-        const json={timeStamp:currentTime.toISOString(),partyName:partyName, electionId:id, voter_id:34}
+                    const secretKey='anujacodes'
+                    const encryptedId=sessionStorage.getItem('votingId');
+                    console.log(encryptedId);
+
+                    const bytes = CryptoJS.AES.decrypt(encryptedId, secretKey);
+                    // console.log(bytes);
+                    const decryptedId=bytes.toString(CryptoJS.enc.Utf8);
+                    console.log('Encryted Id',decryptedId)
+
+        const json={timeStamp:currentTime.toISOString(),partyName:partyName, electionId:id, voter_id:decryptedId}
         console.log(json);
 
         const response=await fetch('http://localhost:5000/api/check_vote_data', {
@@ -55,11 +74,6 @@ export default   function Election()
         body: JSON.stringify(json)
         });
 
-        // const response = await axios.post('http://localhost:5000/api/check_vote_data', json, {
-        //     headers: {
-        //         'Content-Type': 'application/json', // Ensure this is set correctly
-        //     }
-        // });
 
         console.log(response);
         

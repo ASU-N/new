@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./home.css";
 
-var endTime=null,startTime=null;
+var startTime=null, endTime=null;
+
 
 
 
@@ -60,8 +61,10 @@ const handleClickOnGoing = async (data) => {
     }
     else
     {
-      sessionStorage.setItem("electionId", data.id);
-       navigate('/election');
+   
+    
+    sessionStorage.setItem("electionId", data.id); 
+    navigate('/election');
     }
 
 
@@ -103,11 +106,7 @@ const handleClickOnGoing = async (data) => {
       {type === "past" && (
         <>
           <p>Winner: {election.winner}</p>
-          {/* <a href={} target="_blank" rel="noreferrer">
-            View Results
-          </a> */}
-
-          <Link to={`/home/result/#${election.id}`}>View Result</Link>
+          <Link to={`/home/result/${election.id}`}>View Result</Link>
         </>
       )}
     </div>

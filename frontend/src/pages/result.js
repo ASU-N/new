@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams ,Link} from "react-router-dom";
 import Linechart from '../components/chart.js';
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
@@ -11,7 +11,8 @@ export default function Result() {
     const [allPastElection, setAllPastElection] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedElection, setSelectedElection] = useState(electionId); // Track active tab
+    const [selectedElection, setSelectedElection] = useState(electionId); 
+    console.log(params);
 
     const fetchPastElections = async () => {
         try {
@@ -35,7 +36,7 @@ export default function Result() {
 
     useEffect(() => {
         fetchPastElections();
-    }, []);
+    }, [electionId]);
 
     useEffect(() => {
         if (electionId) {
@@ -52,20 +53,30 @@ export default function Result() {
 
     const CallAllPastElection = () => (
         <div className="option_column">
+            <Link
+            to={`/home/result`} 
+            className={`ElectionType ${!electionId ? 'active' : ''}`}
+            onClick={() => setSelectedElection(null)}
+            >
+            All
+        </Link>
             {allPastElection.map((individual) => (
-                <a
-                    key={individual.electionId}
-                    href={`#${individual.electionId}`}
-                    className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
-                    onClick={() => setSelectedElection(individual.electionId)} // Update active state on click
-                >
-                    {individual.electionName}
-                </a>
+            <Link
+                key={individual.electionId}
+                to={`/home/result/${individual.electionId}`} 
+                className={`ElectionType ${selectedElection === individual.electionId ? 'active' : ''}`} 
+                onClick={() => setSelectedElection(individual.electionId)} 
+            >{individual.electionName}</Link>
             ))}
         </div>
     );
 
-    const electionArray = electionId ? allPastElection.filter(individual => individual.electionId === electionId) : [];
+    console.log(electionId);
+    console.log('All Past Elections',allPastElection);
+    const electionArray = electionId ? allPastElection.filter(individual => String(individual.electionId) === String(electionId)) : [];
+
+
+    console.log('ElectionArray',electionArray);
 
     return (
         <div className="result-page">

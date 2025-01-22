@@ -64,11 +64,12 @@ function Linechart({ partyNames, electionId, electionData, electionName }) {
                         xaxis: {
                             title: { text: "Time of Voting" },
                             categories: timeStamp,
-                            offsetY:0
+                            margin:4,
+                            offsetY: 0,
                         },
                         yaxis: {
                             title: { text: "Votes" },
-                            offsetX:0
+                            offsetX: 0,
                         },
                         stroke: {
                             width: 3,
@@ -81,22 +82,26 @@ function Linechart({ partyNames, electionId, electionData, electionName }) {
                                 left: 75,
                                 right: 5,
                             },
+                            margin: {
+                                top: 10,
+                                bottom: 30,
+                                left: 10,
+                                right: 10,
+                            },
                         },
                         chart: {
                             selection: {
                                 enabled: false,
                             },
-                            margin:{
-                                top:10,
-                                bottom:30,
-                                left:10,
-                                right:10
+                            animations:{
+                                enabled:true
                             }
                         },
                         legend: {
                             position: 'right',
                         },
                     }}
+
                 />
                 <div className='vote_column'>
                     {console.log(timeVSVote)}

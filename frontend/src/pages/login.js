@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import votingImage from '../assets/login.png';
 import ToggleButton from '../components/toggleButton';
+import  CryptoJS from 'crypto-js';
 
 const Login = () => {
     const [videoStream, setVideoStream] = useState(null);
@@ -34,13 +35,20 @@ const Login = () => {
     };
 
       const sendFrameToBackend = (frame, action) => {
-        console.log("Sending data: ", { frame, voter_id: votingId });  // Log the data you're sending to the backend
+        console.log("Sending data: ", { frame, voter_id: votingId }); 
         axios.post(`http://localhost:5000/${action}`, { frame, voter_id: votingId }, { withCredentials: true })
             .then(response => {
                 console.log("Response: ", response.data);
                 alert(response.data.message); // Display the backend's message
        
                 if (response.data.message.includes('successful')) {
+                        const secretKey = 'anujacodes'; 
+                        console.log(votingId);
+                        const encryptedId = CryptoJS.AES.encrypt(votingId.toString(), secretKey).toString();
+                        console.log('Encrypted Id',encryptedId);
+                       
+                        
+                        sessionStorage.setItem("votingId", encryptedId); 
                     navigate('/home');
                 }
             })

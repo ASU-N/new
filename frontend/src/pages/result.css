@@ -56,7 +56,7 @@ section.homelayout_section{
 /* Style for anchor tags */
 a.ElectionType {
     margin: 1vh;
-    background-color: gray;
+    background-color:  #ff7878;
     color: white;
     border-radius: 2.5vh;
     display: inline-block;
@@ -68,15 +68,14 @@ a.ElectionType {
 
 /* Hover effect for anchor tags */
 a.ElectionType:hover {
-    background-color: #ff7878;
+   opacity: 0.7;
     transform: scale(1.1); /* Slight zoom effect */
 }
 
 /* Active anchor style */
 a.ElectionType.active {
-    background-color: #ff7878; /* Highlighted background */
-    font-weight: bold; /* Bold text for active link */
+opacity:0.5;
     transform: scale(1.1); /* Slight zoom effect */
-    border: 2px solid #ff4040; /* Optional border to emphasize the active link */
+   
 }
 
